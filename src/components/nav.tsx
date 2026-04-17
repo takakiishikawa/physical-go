@@ -2,7 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Dumbbell, Video, Archive, Scale, Settings } from 'lucide-react'
+import {
+  LayoutDashboard, Dumbbell, Video, Archive,
+  Scale, Settings, Activity
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navItems = [
@@ -14,12 +17,19 @@ const navItems = [
   { href: '/settings', icon: Settings, label: '設定' },
 ]
 
-export function BottomNav() {
+export function Sidebar() {
   const pathname = usePathname()
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 pb-safe">
-      <div className="flex items-center justify-around px-2 py-2">
+    <aside className="hidden md:flex flex-col w-56 border-r border-border bg-card shrink-0 h-screen sticky top-0">
+      <div className="px-5 py-5 border-b border-border">
+        <Link href="/dashboard" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+            <Activity className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-base font-semibold tracking-tight">PhysicalGo</span>
+        </Link>
+      </div>
+      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {navItems.map(({ href, icon: Icon, label }) => {
           const isActive = pathname === href || pathname.startsWith(href + '/')
           return (
@@ -27,14 +37,40 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                'flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors min-w-[52px]',
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
                 isActive
-                  ? 'text-primary'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-primary text-white'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
               )}
             >
-              <Icon className={cn('w-5 h-5', isActive && 'text-primary')} />
-              <span className="text-[10px] font-medium">{label}</span>
+              <Icon className="w-4 h-4 shrink-0" />
+              {label}
+            </Link>
+          )
+        })}
+      </nav>
+    </aside>
+  )
+}
+
+export function BottomNav() {
+  const pathname = usePathname()
+  return (
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur border-t border-border z-50">
+      <div className="flex items-center justify-around px-1 py-1.5">
+        {navItems.map(({ href, icon: Icon, label }) => {
+          const isActive = pathname === href || pathname.startsWith(href + '/')
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                'flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-colors min-w-[48px]',
+                isActive ? 'text-primary' : 'text-muted-foreground'
+              )}
+            >
+              <Icon className="w-5 h-5" />
+              <span className="text-[9px] font-medium">{label}</span>
             </Link>
           )
         })}
