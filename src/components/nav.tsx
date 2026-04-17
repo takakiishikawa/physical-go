@@ -2,10 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import {
   LayoutDashboard, Dumbbell, Video, Archive,
-  Scale, Settings, Activity, ChevronUp, LayoutGrid
+  Scale, Settings, Activity, ChevronUp, LayoutGrid, LogOut
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -125,10 +126,31 @@ export function Sidebar() {
           )
         })}
       </nav>
-      <div className="border-t border-border pb-3 pt-2">
+      <div className="border-t border-border pb-3 pt-2 space-y-0.5">
         <AppSwitcher />
+        <SidebarLogout />
       </div>
     </aside>
+  )
+}
+
+function SidebarLogout() {
+  const router = useRouter()
+  const handleSignOut = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+  return (
+    <div className="px-3">
+      <button
+        onClick={handleSignOut}
+        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+      >
+        <LogOut className="w-4 h-4 shrink-0" />
+        ログアウト
+      </button>
+    </div>
   )
 }
 

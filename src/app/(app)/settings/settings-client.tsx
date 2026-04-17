@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { LogOut, User, Info, Scale, Shield, ChevronRight } from 'lucide-react'
+import { User, Info, Scale, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import type { UserSettings } from '@/types'
 
@@ -41,11 +41,6 @@ export function SettingsClient({ user, settings }: Props) {
     } finally {
       setLoading(false)
     }
-  }
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/')
   }
 
   return (
@@ -105,27 +100,6 @@ export function SettingsClient({ user, settings }: Props) {
         </CardContent>
       </Card>
 
-      {/* App Info */}
-      <Card className="border border-border/60">
-        <CardHeader className="pb-3 pt-4 px-4">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Shield className="w-4 h-4 text-primary" />アプリ情報
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-4 pb-4 divide-y divide-border/40">
-          {[
-            { label: 'アプリ名', value: 'PhysicalGo' },
-            { label: 'バージョン', value: '1.0.0' },
-            { label: '対応種目', value: '3種目' },
-          ].map(row => (
-            <div key={row.label} className="flex justify-between py-2.5 text-sm">
-              <span className="text-muted-foreground">{row.label}</span>
-              <span className="font-medium">{row.value}</span>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
       {/* Concept */}
       <Link href="/concept">
         <Button variant="outline" className="w-full gap-2 justify-between">
@@ -137,12 +111,6 @@ export function SettingsClient({ user, settings }: Props) {
         </Button>
       </Link>
 
-      {/* Sign Out */}
-      <Button variant="outline" className="w-full border-destructive/30 text-destructive hover:bg-destructive/5 gap-2"
-        onClick={handleSignOut}>
-        <LogOut className="w-4 h-4" />
-        ログアウト
-      </Button>
     </div>
   )
 }
