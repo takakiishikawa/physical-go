@@ -89,7 +89,7 @@ export function BodyClient({ bodyRecords, userId }: Props) {
   return (
     <div className="px-4 pt-6 pb-4 space-y-6 max-w-2xl mx-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-normal" style={{ fontFamily: 'var(--font-dm-serif)' }}>
+        <h1 className="text-2xl font-normal">
           ボディデータ
         </h1>
         <Button

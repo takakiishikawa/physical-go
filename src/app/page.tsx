@@ -10,7 +10,7 @@ export default function LoginPage() {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        redirectTo: `https://physical-go.vercel.app/auth/callback`,
         scopes: 'email profile',
       },
     })
@@ -25,7 +25,7 @@ export default function LoginPage() {
               <Dumbbell className="w-9 h-9 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl font-normal text-foreground" style={{ fontFamily: 'var(--font-dm-serif)' }}>
+          <h1 className="text-4xl font-normal text-foreground">
             PhysicalGo
           </h1>
           <p className="text-muted-foreground text-base leading-relaxed">

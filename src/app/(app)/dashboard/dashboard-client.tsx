@@ -46,7 +46,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
       {/* Header */}
       <div>
         <p className="text-muted-foreground text-sm">おかえり</p>
-        <h1 className="text-2xl font-normal" style={{ fontFamily: 'var(--font-dm-serif)' }}>
+        <h1 className="text-2xl font-normal">
           {userName.split(' ')[0]}
         </h1>
       </div>

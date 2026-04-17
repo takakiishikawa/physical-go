@@ -43,7 +43,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
               {format(new Date(session.recorded_at), 'M月d日 HH:mm', { locale: ja })}
             </span>
           </div>
-          <h1 className="text-xl font-normal mt-0.5" style={{ fontFamily: 'var(--font-dm-serif)' }}>
+          <h1 className="text-xl font-normal mt-0.5">
             フォームフィードバック
           </h1>
         </div>

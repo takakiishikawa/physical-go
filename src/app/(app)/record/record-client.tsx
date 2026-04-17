@@ -122,7 +122,7 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
       {showConfetti && <ConfettiComponent />}
 
       <div>
-        <h1 className="text-2xl font-normal" style={{ fontFamily: 'var(--font-dm-serif)' }}>
+        <h1 className="text-2xl font-normal">
           自己ベスト記録
         </h1>
         <p className="text-sm text-muted-foreground mt-1">種目を選んで記録しよう</p>
