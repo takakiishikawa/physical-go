@@ -25,10 +25,10 @@ interface Props {
   userName: string
 }
 
-const EXERCISE_META: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
-  half_deadlift: { icon: Dumbbell, color: '#2563B0', bg: 'bg-blue-50' },
-  pull_up:       { icon: ArrowUpToLine, color: '#10b981', bg: 'bg-emerald-50' },
-  bench_press:   { icon: Zap, color: '#8b5cf6', bg: 'bg-violet-50' },
+const EXERCISE_META: Record<string, { icon: React.ElementType; colorVar: string }> = {
+  half_deadlift: { icon: Dumbbell,       colorVar: 'var(--color-exercise-deadlift)' },
+  pull_up:       { icon: ArrowUpToLine,  colorVar: 'var(--color-exercise-pullup)' },
+  bench_press:   { icon: Zap,            colorVar: 'var(--color-exercise-benchpress)' },
 }
 
 export function DashboardClient({ exercises, personalRecords, recentFeedback, latestBodyRecord, userName }: Props) {
@@ -53,7 +53,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
   const totalSessions = personalRecords.length
 
   return (
-    <div className="px-4 md:px-8 pt-6 pb-6 space-y-6 max-w-6xl mx-auto">
+    <div className="space-y-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -62,7 +62,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
         </div>
         <div className="flex gap-2">
           <Link href="/record">
-            <Button size="sm" className="bg-primary hover:bg-primary/90 gap-1.5 hidden md:flex">
+            <Button size="sm" className="gap-1.5 hidden md:flex">
               <Plus className="w-3.5 h-3.5" />
               記録する
             </Button>
@@ -83,16 +83,14 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
           label="自己ベスト更新"
           value={totalPRs}
           unit="回"
-          color="text-amber-500"
-          bg="bg-amber-50"
+          iconStyle={{ color: 'var(--color-warning)' }}
         />
         <StatCard
           icon={Activity}
           label="総記録数"
           value={totalSessions}
           unit="件"
-          color="text-primary"
-          bg="bg-primary/5"
+          iconClassName="text-primary"
         />
         {latestBodyRecord?.weight_kg && (
           <StatCard
@@ -100,8 +98,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
             label="体重"
             value={latestBodyRecord.weight_kg}
             unit="kg"
-            color="text-emerald-600"
-            bg="bg-emerald-50"
+            iconClassName="text-success"
             muted
           />
         )}
@@ -111,8 +108,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
             label="体脂肪率"
             value={latestBodyRecord.body_fat_pct}
             unit="%"
-            color="text-violet-600"
-            bg="bg-violet-50"
+            iconClassName="text-muted-foreground"
             muted
           />
         )}
@@ -134,18 +130,16 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
             </Link>
           </div>
           <div className="space-y-3">
-            {chartDataByExercise.map(({ exercise, data, icon: Icon, color, bg, bestVal }) => (
-              <Card key={exercise.id} className="border border-border/60">
+            {chartDataByExercise.map(({ exercise, data, icon: Icon, colorVar, bestVal }) => (
+              <Card key={exercise.id}>
                 <CardHeader className="pb-1 pt-3 px-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className={`w-6 h-6 ${bg} rounded-md flex items-center justify-center`}>
-                        <Icon className="w-3.5 h-3.5" style={{ color }} />
-                      </div>
+                      <Icon className="w-3.5 h-3.5" style={{ color: colorVar }} />
                       <CardTitle className="text-sm font-medium">{exercise.name_ja}</CardTitle>
                     </div>
                     {bestVal !== null && (
-                      <Badge variant="outline" className="text-xs font-medium" style={{ borderColor: color, color }}>
+                      <Badge variant="outline" className="text-xs font-medium">
                         {exercise.name === 'pull_up' ? `最高 ${bestVal}回` : `最高 ${bestVal}kg`}
                       </Badge>
                     )}
@@ -159,17 +153,16 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
                   ) : (
                     <ResponsiveContainer width="100%" height={110}>
                       <LineChart data={data} margin={{ top: 6, right: 12, left: -22, bottom: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                        <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                        <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                        <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }} tickLine={false} axisLine={false} />
+                        <YAxis tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
                         <Tooltip
-                          contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                          contentStyle={{ fontSize: 11, borderRadius: 4, border: '1px solid var(--color-border)', boxShadow: 'var(--shadow-md)' }}
                           formatter={(val) => [`${val}${exercise.name === 'pull_up' ? '回' : 'kg'}`, exercise.name_ja]}
                         />
-                        <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: color, stroke: 'white', strokeWidth: 2 }} />
+                        <Line type="monotone" dataKey="value" stroke={colorVar} strokeWidth={2} dot={false} activeDot={{ r: 4, fill: colorVar, stroke: 'white', strokeWidth: 2 }} />
                         {data.map((d, i) => d.isPR ? (
-                          <ReferenceDot key={i} x={d.date} y={Number(d.value)} r={5} fill={color} stroke="white" strokeWidth={2}>
-                          </ReferenceDot>
+                          <ReferenceDot key={i} x={d.date} y={Number(d.value)} r={5} fill={colorVar} stroke="white" strokeWidth={2} />
                         ) : null)}
                       </LineChart>
                     </ResponsiveContainer>
@@ -180,9 +173,8 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
           </div>
         </div>
 
-        {/* Right column — 1/3 width on desktop */}
+        {/* Right column */}
         <div className="space-y-4">
-          {/* Recent form feedback */}
           <div>
             <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-3">
               <Video className="w-4 h-4" />
@@ -190,7 +182,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
             </h2>
             {recentFeedback ? (
               <Link href={`/form/${recentFeedback.session_id}`}>
-                <Card className="border border-border/60 hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer">
+                <Card className="hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer">
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge className="bg-primary/10 text-primary border-0 text-xs">
@@ -210,7 +202,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
                 </Card>
               </Link>
             ) : (
-              <Card className="border border-dashed border-border">
+              <Card className="border-dashed">
                 <CardContent className="p-4 text-center space-y-2">
                   <Video className="w-8 h-8 text-muted-foreground/30 mx-auto" />
                   <p className="text-xs text-muted-foreground">まだフォームチェックがありません</p>
@@ -225,7 +217,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
           {/* Quick actions (mobile only) */}
           <div className="md:hidden grid grid-cols-2 gap-3">
             <Link href="/record">
-              <Card className="border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer">
+              <Card className="border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors cursor-pointer">
                 <CardContent className="p-3 text-center">
                   <Dumbbell className="w-5 h-5 text-primary mx-auto mb-1" />
                   <p className="text-xs font-medium text-primary">記録する</p>
@@ -233,7 +225,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
               </Card>
             </Link>
             <Link href="/form">
-              <Card className="border border-border/60 hover:border-primary/20 transition-colors cursor-pointer">
+              <Card className="hover:border-primary/20 transition-colors cursor-pointer">
                 <CardContent className="p-3 text-center">
                   <Video className="w-5 h-5 text-muted-foreground mx-auto mb-1" />
                   <p className="text-xs font-medium">フォームチェック</p>
@@ -249,12 +241,10 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
               種目サマリー
             </h2>
             <div className="space-y-2">
-              {chartDataByExercise.map(({ exercise, icon: Icon, color, bg, bestVal, latestVal }) => (
-                <Card key={exercise.id} className="border border-border/60">
+              {chartDataByExercise.map(({ exercise, icon: Icon, colorVar, bestVal, latestVal }) => (
+                <Card key={exercise.id}>
                   <CardContent className="p-3 flex items-center gap-3">
-                    <div className={`w-8 h-8 ${bg} rounded-lg flex items-center justify-center shrink-0`}>
-                      <Icon className="w-4 h-4" style={{ color }} />
-                    </div>
+                    <Icon className="w-4 h-4 shrink-0" style={{ color: colorVar }} />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium truncate">{exercise.name_ja}</p>
                       <p className="text-xs text-muted-foreground">
@@ -279,29 +269,23 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
   )
 }
 
-function StatCard({ icon: Icon, label, value, unit, color, bg, muted }: {
+function StatCard({ icon: Icon, label, value, unit, iconClassName, iconStyle, muted }: {
   icon: React.ElementType
   label: string
   value: number
   unit: string
-  color: string
-  bg: string
+  iconClassName?: string
+  iconStyle?: React.CSSProperties
   muted?: boolean
 }) {
   return (
-    <Card className="border border-border/60">
+    <Card>
       <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className={`w-8 h-8 ${bg} rounded-lg flex items-center justify-center`}>
-            <Icon className={`w-4 h-4 ${color}`} />
-          </div>
-        </div>
-        <div className="mt-2">
-          <p className={`text-2xl font-semibold ${muted ? 'text-foreground/50' : ''}`}>
-            {value}<span className="text-sm font-normal ml-0.5 text-muted-foreground">{unit}</span>
-          </p>
-          <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
-        </div>
+        <Icon className={`w-4 h-4 mb-2 ${iconClassName ?? ''}`} style={iconStyle} />
+        <p className={`text-2xl font-semibold ${muted ? 'text-foreground/50' : ''}`}>
+          {value}<span className="text-sm font-normal ml-0.5 text-muted-foreground">{unit}</span>
+        </p>
+        <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
       </CardContent>
     </Card>
   )

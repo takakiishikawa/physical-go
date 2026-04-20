@@ -30,10 +30,10 @@ interface Props {
   userId: string
 }
 
-const EXERCISE_META: Record<string, { icon: React.ElementType; color: string; bg: string; border: string }> = {
-  half_deadlift: { icon: Dumbbell,       color: '#2563B0', bg: 'bg-blue-50',    border: 'border-blue-200' },
-  pull_up:       { icon: ArrowUpToLine,  color: '#10b981', bg: 'bg-emerald-50', border: 'border-emerald-200' },
-  bench_press:   { icon: Zap,            color: '#8b5cf6', bg: 'bg-violet-50',  border: 'border-violet-200' },
+const EXERCISE_META: Record<string, { icon: React.ElementType; colorVar: string }> = {
+  half_deadlift: { icon: Dumbbell,       colorVar: 'var(--color-exercise-deadlift)' },
+  pull_up:       { icon: ArrowUpToLine,  colorVar: 'var(--color-exercise-pullup)' },
+  bench_press:   { icon: Zap,            colorVar: 'var(--color-exercise-benchpress)' },
 }
 
 function todayStr() {
@@ -59,7 +59,6 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
   } | null>(null)
   const [showConfetti, setShowConfetti] = useState(false)
 
-  // Edit state
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editDate, setEditDate] = useState('')
   const [editWeight, setEditWeight] = useState('')
@@ -164,7 +163,7 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
       .map(r => ({ date: format(new Date(r.recorded_at), 'M/d'), value: isPullUp ? r.reps : r.weight_kg }))
 
   return (
-    <div className="px-4 md:px-8 pt-6 pb-6 max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       {showConfetti && <ConfettiComponent />}
 
       <div>
@@ -174,17 +173,15 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
 
       {/* PR Banner */}
       {prResult && (
-        <div className={`rounded-2xl p-4 flex items-center gap-3 border animate-in fade-in slide-in-from-top-2 ${
-          prResult.isPR ? 'bg-amber-50 border-amber-200' : 'bg-primary/5 border-primary/20'
+        <div className={`rounded-lg p-4 flex items-center gap-3 border animate-in fade-in slide-in-from-top-2 ${
+          prResult.isPR ? 'bg-warning/10 border-warning/20' : 'bg-primary/5 border-primary/20'
         }`}>
           {prResult.isPR ? (
             <>
-              <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                <Trophy className="w-5 h-5 text-amber-600" />
-              </div>
+              <Trophy className="w-5 h-5 shrink-0 text-warning" />
               <div>
-                <p className="font-semibold text-amber-700">自己ベスト更新</p>
-                <p className="text-sm text-amber-600/80">
+                <p className="font-semibold" style={{ color: 'var(--color-warning)' }}>自己ベスト更新</p>
+                <p className="text-sm text-muted-foreground">
                   {prResult.prevValue
                     ? `${prResult.prevValue}${prResult.exerciseName === '懸垂' ? '回' : 'kg'} → ${prResult.newValue}${prResult.exerciseName === '懸垂' ? '回' : 'kg'}`
                     : `${prResult.newValue}${prResult.exerciseName === '懸垂' ? '回' : 'kg'} で記録開始`}
@@ -193,9 +190,7 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
             </>
           ) : (
             <>
-              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-5 h-5 text-primary" />
-              </div>
+              <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
               <p className="text-sm text-foreground/70 font-medium">今日も積み上げた</p>
             </>
           )}
@@ -221,13 +216,11 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
                   <button
                     key={ex.id}
                     onClick={() => { setSelectedExercise(isSelected ? null : ex); setPrResult(null) }}
-                    className={`w-full flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left transition-all ${
+                    className={`w-full flex items-center gap-3 p-3.5 rounded-lg border-2 text-left transition-all ${
                       isSelected ? 'border-primary bg-primary/5' : 'border-border bg-card hover:border-primary/30'
                     }`}
                   >
-                    <div className={`w-9 h-9 ${meta.bg} rounded-xl flex items-center justify-center shrink-0`}>
-                      <Icon className="w-4.5 h-4.5" style={{ color: meta.color }} />
-                    </div>
+                    <Icon className="w-4 h-4 shrink-0" style={{ color: meta.colorVar }} />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">{ex.name_ja}</p>
                       {latestPR !== null && (
@@ -252,7 +245,7 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
               <Card className="border-primary/30 animate-in fade-in">
                 <CardHeader className="pb-3 pt-4 px-4">
                   <CardTitle className="text-sm flex items-center gap-2">
-                    <Icon className="w-4 h-4" style={{ color: meta.color }} />
+                    <Icon className="w-4 h-4" style={{ color: meta.colorVar }} />
                     {selectedExercise.name_ja} を記録
                   </CardTitle>
                 </CardHeader>
@@ -281,7 +274,7 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
                       </div>
                     </div>
                   )}
-                  <Button onClick={handleSubmit} disabled={loading} className="w-full h-11 bg-primary hover:bg-primary/90">
+                  <Button onClick={handleSubmit} disabled={loading} className="w-full h-11">
                     {loading ? '記録中...' : (
                       <span className="flex items-center gap-2"><Plus className="w-4 h-4" />記録する</span>
                     )}
@@ -311,9 +304,7 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
                   <button className="w-full flex items-center justify-between"
                     onClick={() => setShowHistory(prev => ({ ...prev, [ex.id]: !isExpanded }))}>
                     <div className="flex items-center gap-2.5">
-                      <div className={`w-7 h-7 ${meta.bg} rounded-xl flex items-center justify-center`}>
-                        <Icon className="w-3.5 h-3.5" style={{ color: meta.color }} />
-                      </div>
+                      <Icon className="w-3.5 h-3.5" style={{ color: meta.colorVar }} />
                       <span className="font-medium text-sm">{ex.name_ja}</span>
                       <Badge variant="outline" className="text-xs">{records.length}件</Badge>
                     </div>
@@ -324,18 +315,18 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
                     <div className="mt-4 space-y-4 animate-in fade-in">
                       <ResponsiveContainer width="100%" height={130}>
                         <LineChart data={chartData} margin={{ top: 8, right: 12, left: -22, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                          <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                          <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
-                          <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} formatter={(val) => [`${val}${isPullUp ? '回' : 'kg'}`, ex.name_ja]} />
-                          <Line type="monotone" dataKey="value" stroke={meta.color} strokeWidth={2} dot={{ r: 3, fill: meta.color }} />
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                          <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }} tickLine={false} axisLine={false} />
+                          <YAxis tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
+                          <Tooltip contentStyle={{ fontSize: 11, borderRadius: 4 }} formatter={(val) => [`${val}${isPullUp ? '回' : 'kg'}`, ex.name_ja]} />
+                          <Line type="monotone" dataKey="value" stroke={meta.colorVar} strokeWidth={2} dot={{ r: 3, fill: meta.colorVar }} />
                         </LineChart>
                       </ResponsiveContainer>
                       <div className="divide-y divide-border/30">
                         {records.slice().sort((a, b) => new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime()).map(r => (
                           <div key={r.id}>
                             {editingId === r.id ? (
-                              <div className="py-3 space-y-3 bg-muted/20 rounded-xl px-3 my-1">
+                              <div className="py-3 space-y-3 bg-muted/20 rounded-lg px-3 my-1">
                                 <div className="space-y-1">
                                   <Label className="text-xs">記録日</Label>
                                   <Input type="date" value={editDate} onChange={e => setEditDate(e.target.value)}
@@ -358,7 +349,7 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
                                   <Button variant="outline" size="sm" className="flex-1 h-8 text-xs" onClick={cancelEdit}>
                                     <X className="w-3 h-3 mr-1" />キャンセル
                                   </Button>
-                                  <Button size="sm" className="flex-1 h-8 text-xs bg-primary hover:bg-primary/90"
+                                  <Button size="sm" className="flex-1 h-8 text-xs"
                                     onClick={() => handleUpdate(isPullUp)} disabled={editLoading}>
                                     {editLoading ? '更新中...' : (
                                       <span className="flex items-center gap-1"><Check className="w-3 h-3" />保存</span>
@@ -373,7 +364,7 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
                                 </span>
                                 <div className="flex items-center gap-2 flex-1">
                                   <span className="font-medium">{isPullUp ? `${r.reps}回` : `${r.weight_kg}kg`}</span>
-                                  {r.is_pr && <Star className="w-3 h-3 fill-amber-400 text-amber-400" />}
+                                  {r.is_pr && <Star className="w-3 h-3 fill-warning text-warning" />}
                                 </div>
                                 <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                                   <button

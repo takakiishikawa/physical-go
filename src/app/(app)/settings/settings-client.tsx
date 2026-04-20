@@ -4,11 +4,15 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { User, Info, Scale, ChevronRight } from 'lucide-react'
+import {
+  SettingsPage,
+  SettingsGroup,
+  SettingsItem,
+} from '@takaki/go-design-system'
+import { User, Scale, Info } from 'lucide-react'
 import Link from 'next/link'
 import type { UserSettings } from '@/types'
 
@@ -43,74 +47,89 @@ export function SettingsClient({ user, settings }: Props) {
     }
   }
 
-  return (
-    <div className="px-4 md:px-8 pt-6 pb-6 max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">設定</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">アカウントと初期値の管理</p>
-      </div>
-
-      {/* Account */}
-      <Card className="border border-border/60">
-        <CardHeader className="pb-3 pt-4 px-4">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <User className="w-4 h-4 text-primary" />アカウント
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-4 pb-4">
-          <div className="flex items-center gap-4">
+  const accountContent = (
+    <SettingsGroup title="アカウント情報">
+      <SettingsItem
+        label="プロフィール"
+        description={user.email}
+        control={
+          <div className="flex items-center gap-3">
             {user.avatar ? (
-              <img src={user.avatar} alt="" className="w-12 h-12 rounded-full ring-2 ring-border" />
+              <img src={user.avatar} alt="" className="w-8 h-8 rounded-full" />
             ) : (
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-border">
-                <User className="w-6 h-6 text-primary" />
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <User className="w-4 h-4 text-primary" />
               </div>
             )}
-            <div>
-              <p className="font-semibold">{user.name || 'ユーザー'}</p>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
-            </div>
+            <span className="text-sm font-medium">{user.name || 'ユーザー'}</span>
           </div>
-        </CardContent>
-      </Card>
+        }
+      />
+    </SettingsGroup>
+  )
 
-      {/* Body Settings */}
-      <Card className="border border-border/60">
-        <CardHeader className="pb-3 pt-4 px-4">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Scale className="w-4 h-4 text-primary" />初期身体データ
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-4 pb-4 space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="weight" className="text-xs">体重 (kg)</Label>
-              <Input id="weight" type="number" placeholder="例: 72.0" value={weightInput}
-                onChange={e => setWeightInput(e.target.value)} inputMode="decimal" className="h-10" />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="bodyFat" className="text-xs">体脂肪率 (%)</Label>
-              <Input id="bodyFat" type="number" placeholder="例: 22.0" value={bodyFatInput}
-                onChange={e => setBodyFatInput(e.target.value)} inputMode="decimal" className="h-10" />
-            </div>
-          </div>
-          <Button onClick={handleSave} disabled={loading} className="w-full bg-primary hover:bg-primary/90">
-            {loading ? '保存中...' : '保存する'}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Concept */}
-      <Link href="/concept">
-        <Button variant="outline" className="w-full gap-2 justify-between">
-          <div className="flex items-center gap-2">
-            <Info className="w-4 h-4" />
-            PhysicalGoとは
-          </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        </Button>
-      </Link>
-
+  const bodyContent = (
+    <div className="space-y-4">
+      <SettingsGroup title="初期身体データ" description="ダッシュボードの表示に使用します">
+        <SettingsItem
+          label="体重 (kg)"
+          control={
+            <Input
+              id="weight"
+              type="number"
+              placeholder="例: 72.0"
+              value={weightInput}
+              onChange={e => setWeightInput(e.target.value)}
+              inputMode="decimal"
+              className="w-28 h-9"
+            />
+          }
+        />
+        <SettingsItem
+          label="体脂肪率 (%)"
+          control={
+            <Input
+              id="bodyFat"
+              type="number"
+              placeholder="例: 22.0"
+              value={bodyFatInput}
+              onChange={e => setBodyFatInput(e.target.value)}
+              inputMode="decimal"
+              className="w-28 h-9"
+            />
+          }
+        />
+      </SettingsGroup>
+      <Button onClick={handleSave} disabled={loading} size="sm">
+        {loading ? '保存中...' : '保存する'}
+      </Button>
     </div>
+  )
+
+  const aboutContent = (
+    <SettingsGroup title="このアプリについて">
+      <SettingsItem
+        label="PhysicalGoとは"
+        description="コンセプト・設計思想を確認する"
+        control={
+          <Link href="/concept">
+            <Button variant="outline" size="sm">
+              <Info className="w-4 h-4" />
+              開く
+            </Button>
+          </Link>
+        }
+      />
+    </SettingsGroup>
+  )
+
+  return (
+    <SettingsPage
+      sections={[
+        { id: 'account', label: 'アカウント', icon: <User className="w-4 h-4" />, content: accountContent },
+        { id: 'body',    label: '身体データ', icon: <Scale className="w-4 h-4" />, content: bodyContent },
+        { id: 'about',   label: 'このアプリ',  icon: <Info className="w-4 h-4" />,  content: aboutContent },
+      ]}
+    />
   )
 }

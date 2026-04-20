@@ -35,7 +35,6 @@ export function BodyClient({ bodyRecords, userId }: Props) {
   const router = useRouter()
   const supabase = createClient()
 
-  // New record form
   const [showForm, setShowForm] = useState(false)
   const [dateInput, setDateInput] = useState(todayStr())
   const [weightInput, setWeightInput] = useState('')
@@ -44,7 +43,6 @@ export function BodyClient({ bodyRecords, userId }: Props) {
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // Edit
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editDate, setEditDate] = useState('')
   const [editWeight, setEditWeight] = useState('')
@@ -145,13 +143,13 @@ export function BodyClient({ bodyRecords, userId }: Props) {
   }
 
   return (
-    <div className="px-4 md:px-8 pt-6 pb-6 max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">ボディデータ</h1>
           <p className="text-sm text-muted-foreground mt-0.5">体重・体脂肪率の定点観測</p>
         </div>
-        <Button size="sm" onClick={() => setShowForm(!showForm)} className="bg-primary hover:bg-primary/90 gap-1.5">
+        <Button size="sm" onClick={() => setShowForm(!showForm)} className="gap-1.5">
           <Plus className="w-3.5 h-3.5" />記録する
         </Button>
       </div>
@@ -170,7 +168,7 @@ export function BodyClient({ bodyRecords, userId }: Props) {
                   {latest.weight_kg}<span className="text-sm ml-0.5">kg</span>
                 </p>
                 {weightDiff !== null && (
-                  <p className={`text-xs mt-1 flex items-center gap-1 ${weightDiff < 0 ? 'text-emerald-600' : 'text-orange-500'}`}>
+                  <p className={`text-xs mt-1 flex items-center gap-1 ${weightDiff < 0 ? 'text-success' : 'text-warning'}`}>
                     {weightDiff < 0 ? <TrendingDown className="w-3 h-3" /> : <TrendingUp className="w-3 h-3" />}
                     {weightDiff > 0 ? '+' : ''}{weightDiff.toFixed(1)}kg
                   </p>
@@ -189,7 +187,7 @@ export function BodyClient({ bodyRecords, userId }: Props) {
                   {latest.body_fat_pct}<span className="text-sm ml-0.5">%</span>
                 </p>
                 {fatDiff !== null && (
-                  <p className={`text-xs mt-1 flex items-center gap-1 ${fatDiff < 0 ? 'text-emerald-600' : 'text-orange-500'}`}>
+                  <p className={`text-xs mt-1 flex items-center gap-1 ${fatDiff < 0 ? 'text-success' : 'text-warning'}`}>
                     {fatDiff < 0 ? <TrendingDown className="w-3 h-3" /> : <TrendingUp className="w-3 h-3" />}
                     {fatDiff > 0 ? '+' : ''}{fatDiff.toFixed(1)}%
                   </p>
@@ -261,7 +259,7 @@ export function BodyClient({ bodyRecords, userId }: Props) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">身体写真（任意・顔なし推奨）</Label>
-              <label className="flex items-center gap-2.5 border-2 border-dashed border-border rounded-xl p-3 cursor-pointer hover:border-primary/40 transition-colors">
+              <label className="flex items-center gap-2.5 border-2 border-dashed border-border rounded-lg p-3 cursor-pointer hover:border-primary/40 transition-colors">
                 <Camera className="w-4 h-4 text-muted-foreground shrink-0" />
                 <span className="text-xs text-muted-foreground truncate">
                   {photoFile ? photoFile.name : '写真を選択'}
@@ -272,7 +270,7 @@ export function BodyClient({ bodyRecords, userId }: Props) {
             </div>
             <div className="flex gap-2 pt-1">
               <Button variant="outline" className="flex-1" onClick={() => setShowForm(false)}>キャンセル</Button>
-              <Button className="flex-1 bg-primary hover:bg-primary/90" onClick={handleSubmit} disabled={loading}>
+              <Button className="flex-1" onClick={handleSubmit} disabled={loading}>
                 {loading ? '記録中...' : '記録する'}
               </Button>
             </div>
@@ -282,11 +280,11 @@ export function BodyClient({ bodyRecords, userId }: Props) {
 
       {bodyRecords.length === 0 && !showForm ? (
         <div className="text-center py-20 space-y-3">
-          <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center mx-auto">
             <Scale className="w-8 h-8 text-muted-foreground/30" />
           </div>
           <p className="text-sm font-medium text-muted-foreground">まだ記録がありません</p>
-          <Button size="sm" className="bg-primary mt-1" onClick={() => setShowForm(true)}>最初の記録をする</Button>
+          <Button size="sm" className="mt-1" onClick={() => setShowForm(true)}>最初の記録をする</Button>
         </div>
       ) : (
         <div className="grid md:grid-cols-2 gap-6">
@@ -301,11 +299,11 @@ export function BodyClient({ bodyRecords, userId }: Props) {
                   <p className="text-xs text-muted-foreground mb-3">体重 (kg)</p>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={chartData} margin={{ top: 8, right: 12, left: -22, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                      <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
-                      <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} formatter={(v) => [`${v}kg`, '体重']} />
-                      <Line type="monotone" dataKey="weight" stroke="#2563B0" strokeWidth={2} dot={{ r: 3 }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }} tickLine={false} axisLine={false} />
+                      <YAxis tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
+                      <Tooltip contentStyle={{ fontSize: 11, borderRadius: 4 }} formatter={(v) => [`${v}kg`, '体重']} />
+                      <Line type="monotone" dataKey="weight" stroke="var(--color-primary)" strokeWidth={2} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -315,11 +313,11 @@ export function BodyClient({ bodyRecords, userId }: Props) {
                   <p className="text-xs text-muted-foreground mb-3">体脂肪率 (%)</p>
                   <ResponsiveContainer width="100%" height={150}>
                     <LineChart data={chartData} margin={{ top: 8, right: 12, left: -22, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} />
-                      <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
-                      <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} formatter={(v) => [`${v}%`, '体脂肪率']} />
-                      <Line type="monotone" dataKey="bodyFat" stroke="#10b981" strokeWidth={2} dot={{ r: 3 }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }} tickLine={false} axisLine={false} />
+                      <YAxis tick={{ fontSize: 10, fill: 'var(--color-muted-foreground)' }} tickLine={false} axisLine={false} domain={['auto', 'auto']} />
+                      <Tooltip contentStyle={{ fontSize: 11, borderRadius: 4 }} formatter={(v) => [`${v}%`, '体脂肪率']} />
+                      <Line type="monotone" dataKey="bodyFat" stroke="var(--color-exercise-pullup)" strokeWidth={2} dot={{ r: 3 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -337,7 +335,7 @@ export function BodyClient({ bodyRecords, userId }: Props) {
                 <div className="grid grid-cols-3 gap-2">
                   {[...bodyRecords].reverse().filter(r => r.photo_url).map(r => (
                     <div key={r.id} className="space-y-1">
-                      <div className="aspect-[3/4] rounded-xl overflow-hidden bg-muted">
+                      <div className="aspect-[3/4] rounded-lg overflow-hidden bg-muted">
                         <img src={r.photo_url!} alt="" className="w-full h-full object-cover" />
                       </div>
                       <p className="text-[10px] text-muted-foreground text-center">
@@ -384,7 +382,7 @@ export function BodyClient({ bodyRecords, userId }: Props) {
                             </div>
                             <div className="flex gap-2">
                               <Button variant="outline" size="sm" className="flex-1 h-8 text-xs" onClick={cancelEdit}>キャンセル</Button>
-                              <Button size="sm" className="flex-1 h-8 text-xs bg-primary hover:bg-primary/90"
+                              <Button size="sm" className="flex-1 h-8 text-xs"
                                 onClick={handleUpdate} disabled={editLoading}>
                                 {editLoading ? '更新中...' : (
                                   <span className="flex items-center gap-1"><Check className="w-3 h-3" />保存</span>

@@ -16,10 +16,10 @@ import type { Exercise } from '@/types'
 
 interface Props { exercises: Exercise[]; userId: string }
 
-const EXERCISE_META: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
-  half_deadlift: { icon: Dumbbell,      color: '#2563B0', bg: 'bg-blue-50' },
-  pull_up:       { icon: ArrowUpToLine, color: '#10b981', bg: 'bg-emerald-50' },
-  bench_press:   { icon: Zap,           color: '#8b5cf6', bg: 'bg-violet-50' },
+const EXERCISE_META: Record<string, { icon: React.ElementType; colorVar: string }> = {
+  half_deadlift: { icon: Dumbbell,      colorVar: 'var(--color-exercise-deadlift)' },
+  pull_up:       { icon: ArrowUpToLine, colorVar: 'var(--color-exercise-pullup)' },
+  bench_press:   { icon: Zap,           colorVar: 'var(--color-exercise-benchpress)' },
 }
 
 export function FormClient({ exercises }: Props) {
@@ -68,7 +68,7 @@ export function FormClient({ exercises }: Props) {
   }
 
   return (
-    <div className="px-4 md:px-8 pt-6 pb-6 max-w-6xl mx-auto space-y-6">
+    <div className="max-w-6xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">フォームチェック</h1>
         <p className="text-sm text-muted-foreground mt-1">動画をアップロードするとAIがフォームを詳細に分析します</p>
@@ -87,12 +87,10 @@ export function FormClient({ exercises }: Props) {
                 const Icon = meta.icon
                 return (
                   <button key={ex.id} onClick={() => setSelectedExercise(isSelected ? null : ex)}
-                    className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
                       isSelected ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'
                     }`}>
-                    <div className={`w-8 h-8 ${meta.bg} rounded-lg flex items-center justify-center`}>
-                      <Icon className="w-4 h-4" style={{ color: meta.color }} />
-                    </div>
+                    <Icon className="w-4 h-4" style={{ color: meta.colorVar }} />
                     <p className="text-xs font-medium text-center leading-tight">{ex.name_ja}</p>
                     {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
                   </button>
@@ -107,7 +105,7 @@ export function FormClient({ exercises }: Props) {
             <input ref={fileRef} type="file" accept="video/*" capture="environment" onChange={handleFileChange} className="hidden" />
             {videoPreview ? (
               <div className="space-y-2">
-                <div className="relative rounded-xl overflow-hidden bg-black aspect-video">
+                <div className="relative rounded-lg overflow-hidden bg-black aspect-video">
                   <video src={videoPreview} className="w-full h-full object-contain" controls muted playsInline />
                   <button onClick={() => { setVideoFile(null); setVideoPreview(null); if (fileRef.current) fileRef.current.value = '' }}
                     className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center">
@@ -115,19 +113,19 @@ export function FormClient({ exercises }: Props) {
                   </button>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-success" />
                   {videoFile?.name}
                 </div>
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 <button onClick={() => { if (fileRef.current) { fileRef.current.capture = 'environment'; fileRef.current.click() } }}
-                  className="flex flex-col items-center gap-2.5 p-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 hover:bg-muted/30 transition-all">
+                  className="flex flex-col items-center gap-2.5 p-5 rounded-lg border-2 border-dashed border-border hover:border-primary/40 hover:bg-muted/30 transition-all">
                   <Camera className="w-6 h-6 text-muted-foreground" />
                   <span className="text-xs font-medium text-muted-foreground">今すぐ撮影</span>
                 </button>
                 <button onClick={() => { if (fileRef.current) { fileRef.current.removeAttribute('capture'); fileRef.current.click() } }}
-                  className="flex flex-col items-center gap-2.5 p-5 rounded-xl border-2 border-dashed border-border hover:border-primary/40 hover:bg-muted/30 transition-all">
+                  className="flex flex-col items-center gap-2.5 p-5 rounded-lg border-2 border-dashed border-border hover:border-primary/40 hover:bg-muted/30 transition-all">
                   <Upload className="w-6 h-6 text-muted-foreground" />
                   <span className="text-xs font-medium text-muted-foreground">ギャラリーから</span>
                 </button>
@@ -155,7 +153,7 @@ export function FormClient({ exercises }: Props) {
 
           {/* Analyze Button */}
           <Button onClick={handleAnalyze} disabled={loading || !selectedExercise || !videoFile}
-            className="w-full h-12 bg-primary hover:bg-primary/90 gap-2">
+            className="w-full h-12 gap-2">
             {loading ? (
               <><Loader2 className="w-4 h-4 animate-spin" />{loadingStep}</>
             ) : (
@@ -169,13 +167,13 @@ export function FormClient({ exercises }: Props) {
           {selectedExercise ? (
             <>
               {selectedExercise.filming_guide && (
-                <Card className="border border-blue-100 bg-blue-50">
+                <Card className="border-primary/20 bg-primary/5">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-2.5">
                       <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                       <div>
                         <p className="text-xs font-semibold text-primary mb-1">撮影ガイド</p>
-                        <p className="text-sm text-blue-800 leading-relaxed">{selectedExercise.filming_guide}</p>
+                        <p className="text-sm text-foreground/80 leading-relaxed">{selectedExercise.filming_guide}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -183,7 +181,7 @@ export function FormClient({ exercises }: Props) {
               )}
 
               {selectedExercise.key_checkpoints?.length > 0 && (
-                <Card className="border border-border/60">
+                <Card>
                   <CardHeader className="pb-2 pt-4 px-4">
                     <CardTitle className="text-sm flex items-center gap-2">
                       <ListChecks className="w-4 h-4 text-primary" />
@@ -205,13 +203,13 @@ export function FormClient({ exercises }: Props) {
                 </Card>
               )}
 
-              <Card className="border border-border/60 bg-muted/30">
+              <Card className="bg-muted/30">
                 <CardContent className="p-4">
                   <p className="text-xs font-semibold text-muted-foreground mb-2">解析内容</p>
                   <div className="space-y-1.5">
                     {['フォームの強みと改善点', '各チェックポイントの評価', '前回との比較・成長の記録'].map((item, i) => (
                       <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <CheckCircle2 className="w-3 h-3 text-success shrink-0" />
                         {item}
                       </div>
                     ))}
@@ -221,7 +219,7 @@ export function FormClient({ exercises }: Props) {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground space-y-3">
-              <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center">
+              <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center">
                 <Camera className="w-8 h-8 opacity-30" />
               </div>
               <p className="text-sm font-medium">種目を選択してください</p>
