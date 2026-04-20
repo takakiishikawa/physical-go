@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   ChevronLeft, ChevronRight, CheckCircle2, AlertCircle,
@@ -10,7 +9,7 @@ import {
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import {
-  Banner, Section, Tag, TagGroup,
+  Banner, Section, Tag, TagGroup, PageHeader,
 } from '@takaki/go-design-system'
 import type { FormSession, FormFeedback, Exercise } from '@/types'
 
@@ -32,29 +31,21 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <Link href="/archive">
-          <Button variant="ghost" size="icon" className="shrink-0">
-            <ChevronLeft className="w-5 h-5" />
-          </Button>
-        </Link>
-        <div className="flex-1 min-w-0">
+      <PageHeader
+        title="フォームフィードバック"
+        breadcrumbs={[
+          { label: 'アーカイブ', href: '/archive' },
+          { label: exercise?.name_ja ?? 'フィードバック' },
+        ]}
+        actions={
           <div className="flex items-center gap-2 flex-wrap">
             <Tag color="primary">{exercise?.name_ja}</Tag>
-            <span className="text-xs text-muted-foreground">
-              {format(new Date(session.recorded_at), 'M月d日 HH:mm', { locale: ja })}
-            </span>
-            {(session.weight_kg || session.reps) && (
-              <TagGroup>
-                {session.weight_kg && <Tag>{session.weight_kg}kg</Tag>}
-                {session.reps && <Tag>{session.reps}回</Tag>}
-              </TagGroup>
-            )}
+            <Tag>{format(new Date(session.recorded_at), 'M月d日 HH:mm', { locale: ja })}</Tag>
+            {session.weight_kg && <Tag>{session.weight_kg}kg</Tag>}
+            {session.reps && <Tag>{session.reps}回</Tag>}
           </div>
-          <h1 className="text-xl font-semibold mt-0.5">フォームフィードバック</h1>
-        </div>
-      </div>
+        }
+      />
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Left: Video */}

@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -30,16 +31,19 @@ const EXERCISE_META: Record<string, { icon: React.ElementType; colorVar: string 
 }
 
 export function DashboardClient({ exercises, personalRecords, recentFeedback, latestBodyRecord, userName }: Props) {
+  const router = useRouter()
   const chartDataByExercise = useMemo(() => {
     return exercises.map(ex => {
       const isPullUp = ex.name === 'pull_up'
       const records = personalRecords
         .filter(r => r.exercise_id === ex.id)
         .sort((a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime())
-      const data = records.map(r => ({
-        date: r.recorded_at,
-        value: Number(isPullUp ? r.reps : r.weight_kg) || 0,
-      }))
+      const data = records
+        .filter(r => isPullUp ? r.reps != null : r.weight_kg != null)
+        .map(r => ({
+          date: r.recorded_at,
+          value: Number(isPullUp ? r.reps : r.weight_kg),
+        }))
       const meta = EXERCISE_META[ex.name] ?? EXERCISE_META.half_deadlift
       const bestVal = data.length > 0 ? Math.max(...data.map(d => d.value)) : null
       return { exercise: ex, isPullUp, data, ...meta, bestVal }
@@ -162,7 +166,7 @@ export function DashboardClient({ exercises, personalRecords, recentFeedback, la
                   icon={<Video className="w-8 h-8" />}
                   title="フォームチェックがありません"
                   description="動画を撮って AIにフォームを分析してもらおう"
-                  action={{ label: 'チェックする', onClick: () => window.location.href = '/form' }}
+                  action={{ label: 'チェックする', onClick: () => router.push('/form') }}
                 />
               )}
             </div>
