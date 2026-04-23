@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button as UIButton } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Columns2, Video, Dumbbell, ArrowUpToLine, Zap } from "lucide-react";
 import {
@@ -12,6 +12,7 @@ import {
   Banner,
   Section,
   EmptyState,
+  Button,
 } from "@takaki/go-design-system";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -65,7 +66,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
         title="フォームアーカイブ"
         description="過去のフォームチェックを振り返ろう"
         actions={
-          <Button
+          <UIButton
             variant={compareMode ? "default" : "outline"}
             size="sm"
             onClick={() => {
@@ -76,7 +77,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
           >
             <Columns2 className="w-3.5 h-3.5" />
             {compareMode ? "比較中" : "比較する"}
-          </Button>
+          </UIButton>
         }
       />
 
@@ -201,9 +202,10 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                   return (
                     <div key={session.id} className="relative">
                       {compareMode ? (
-                        <button
+                        <Button
                           onClick={() => toggleSelect(session.id)}
-                          className={`w-full text-left rounded-lg overflow-hidden border-2 transition-all ${
+                          variant="ghost"
+                          className={`w-full text-left rounded-lg overflow-hidden border-2 transition-all p-0 h-auto ${
                             isSelected
                               ? "border-primary shadow-md ring-2 ring-primary/20"
                               : "border-transparent"
@@ -217,7 +219,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                               </span>
                             </div>
                           )}
-                        </button>
+                        </Button>
                       ) : (
                         <Link href={`/form/${session.id}`}>
                           <div className="rounded-lg overflow-hidden border border-border hover:border-primary/40 hover:shadow-sm transition-all">

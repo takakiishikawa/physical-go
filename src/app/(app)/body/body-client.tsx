@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -26,6 +24,8 @@ import {
   Timeline,
   EmptyState,
   Spinner,
+  Button,
+  Input,
   type KpiCard,
   type TimelineItem,
 } from "@takaki/go-design-system";

@@ -17,6 +17,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@takaki/go-design-system";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ホーム" },
@@ -31,28 +32,28 @@ const goApps = [
   {
     name: "NativeGo",
     url: "https://english-learning-app-black.vercel.app/",
-    color: "#E5484D",
+    color: "var(--color-red-9)",
   },
   {
     name: "CareGo",
     url: "https://care-go-mu.vercel.app/dashboard",
-    color: "#30A46C",
+    color: "var(--color-green-9)",
   },
   {
     name: "KenyakuGo",
     url: "https://kenyaku-go.vercel.app/",
-    color: "#F5A623",
+    color: "var(--color-amber-9)",
   },
-  { name: "TaskGo", url: "https://taskgo-dun.vercel.app/", color: "#5E6AD2" },
+  { name: "TaskGo", url: "https://taskgo-dun.vercel.app/", color: "var(--color-indigo-9)" },
   {
     name: "CookGo",
     url: "https://cook-go-lovat.vercel.app/dashboard",
-    color: "#1AD1A5",
+    color: "var(--color-teal-9)",
   },
   {
     name: "PhysicalGo",
     url: "https://physical-go.vercel.app/dashboard",
-    color: "#FF6B6B",
+    color: "var(--color-red-9)",
   },
 ];
 
@@ -73,7 +74,7 @@ function AppSwitcher() {
 
   return (
     <div ref={ref} className="relative px-3 pb-2">
-      <button
+      <Button
         onClick={() => setOpen(!open)}
         className={cn(
           "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
@@ -90,7 +91,7 @@ function AppSwitcher() {
             !open && "rotate-180",
           )}
         />
-      </button>
+      </Button>
 
       {open && (
         <div className="absolute bottom-full left-0 right-0 mb-1 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50">
@@ -191,13 +192,13 @@ function SidebarLogout() {
   };
   return (
     <div className="px-3">
-      <button
+      <Button
         onClick={handleSignOut}
         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
       >
         <LogOut className="w-4 h-4 shrink-0" />
         ログアウト
-      </button>
+      </Button>
     </div>
   );
 }
