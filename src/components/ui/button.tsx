@@ -1,1 +1,1 @@
-export { Button, type ButtonProps } from "@takaki/go-design-system"
+export { Button, type ButtonProps } from "@takaki/go-design-system";

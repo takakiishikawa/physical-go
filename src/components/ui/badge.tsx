@@ -1,1 +1,1 @@
-export { Badge, type BadgeProps } from "@takaki/go-design-system"
+export { Badge, type BadgeProps } from "@takaki/go-design-system";

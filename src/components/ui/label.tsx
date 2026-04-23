@@ -1,1 +1,1 @@
-export { Label } from "@takaki/go-design-system"
+export { Label } from "@takaki/go-design-system";

@@ -1,1 +1,1 @@
-export { Toaster } from "@takaki/go-design-system"
+export { Toaster } from "@takaki/go-design-system";

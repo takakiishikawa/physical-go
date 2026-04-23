@@ -7,4 +7,4 @@ export {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "@takaki/go-design-system"
+} from "@takaki/go-design-system";

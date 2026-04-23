@@ -40,10 +40,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${inter.variable} ${notoSansJP.variable}`} suppressHydrationWarning>
+    <html
+      lang="ja"
+      className={`${inter.variable} ${notoSansJP.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <DesignTokens primaryColor="#DC2626" primaryColorHover="#B91C1C" />
-        <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" sizes="180x180" />
+        <link
+          rel="apple-touch-icon"
+          href="/icons/apple-touch-icon.png"
+          sizes="180x180"
+        />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="antialiased">

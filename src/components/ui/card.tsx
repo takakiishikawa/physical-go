@@ -5,4 +5,4 @@ export {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@takaki/go-design-system"
+} from "@takaki/go-design-system";

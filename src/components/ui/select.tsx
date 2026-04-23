@@ -6,4 +6,4 @@ export {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@takaki/go-design-system"
+} from "@takaki/go-design-system";

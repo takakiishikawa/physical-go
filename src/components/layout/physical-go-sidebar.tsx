@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -15,7 +15,7 @@ import {
   SidebarRail,
   AppSwitcher,
   type AppInfo,
-} from "@takaki/go-design-system"
+} from "@takaki/go-design-system";
 import {
   Archive,
   Dumbbell,
@@ -25,41 +25,65 @@ import {
   Scale,
   Settings,
   Video,
-} from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 const NAV_ITEMS = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ホーム" },
-  { href: "/record",    icon: Dumbbell,        label: "記録" },
-  { href: "/form",      icon: Video,           label: "フォームチェック" },
-  { href: "/archive",   icon: Archive,         label: "アーカイブ" },
-  { href: "/body",      icon: Scale,           label: "ボディ" },
-  { href: "/concept",   icon: Lightbulb,       label: "コンセプト" },
-  { href: "/settings",  icon: Settings,        label: "設定" },
-]
+  { href: "/record", icon: Dumbbell, label: "記録" },
+  { href: "/form", icon: Video, label: "フォームチェック" },
+  { href: "/archive", icon: Archive, label: "アーカイブ" },
+  { href: "/body", icon: Scale, label: "ボディ" },
+  { href: "/concept", icon: Lightbulb, label: "コンセプト" },
+  { href: "/settings", icon: Settings, label: "設定" },
+];
 
 const GO_APPS: AppInfo[] = [
-  { name: "NativeGo",      url: "https://english-learning-app-black.vercel.app/", color: "#E5484D" },
-  { name: "CareGo",        url: "https://care-go-mu.vercel.app/dashboard",        color: "#30A46C" },
-  { name: "KenyakuGo",     url: "https://kenyaku-go.vercel.app/",                 color: "#F5A623" },
-  { name: "TaskGo",        url: "https://taskgo-dun.vercel.app/",                 color: "#5E6AD2" },
-  { name: "CookGo",        url: "https://cook-go-lovat.vercel.app/dashboard",     color: "#1AD1A5" },
-  { name: "PhysicalGo",    url: "https://physical-go.vercel.app/dashboard",       color: "#DC2626" },
-  { name: "Design System", url: "https://go-design-system.vercel.app",            color: "#6B7280" },
-]
+  {
+    name: "NativeGo",
+    url: "https://english-learning-app-black.vercel.app/",
+    color: "#E5484D",
+  },
+  {
+    name: "CareGo",
+    url: "https://care-go-mu.vercel.app/dashboard",
+    color: "#30A46C",
+  },
+  {
+    name: "KenyakuGo",
+    url: "https://kenyaku-go.vercel.app/",
+    color: "#F5A623",
+  },
+  { name: "TaskGo", url: "https://taskgo-dun.vercel.app/", color: "#5E6AD2" },
+  {
+    name: "CookGo",
+    url: "https://cook-go-lovat.vercel.app/dashboard",
+    color: "#1AD1A5",
+  },
+  {
+    name: "PhysicalGo",
+    url: "https://physical-go.vercel.app/dashboard",
+    color: "#DC2626",
+  },
+  {
+    name: "Design System",
+    url: "https://go-design-system.vercel.app",
+    color: "#6B7280",
+  },
+];
 
 export function PhysicalGoSidebar() {
-  const pathname = usePathname()
-  const router = useRouter()
+  const pathname = usePathname();
+  const router = useRouter();
 
   function isActive(href: string) {
-    return pathname === href || pathname.startsWith(href + "/")
+    return pathname === href || pathname.startsWith(href + "/");
   }
 
   async function handleSignOut() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push("/")
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
   }
 
   return (
@@ -108,5 +132,5 @@ export function PhysicalGoSidebar() {
 
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

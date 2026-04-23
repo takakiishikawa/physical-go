@@ -1,23 +1,30 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { SettingsClient } from './settings-client'
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { SettingsClient } from "./settings-client";
 
 export default async function SettingsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/')
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/");
 
   const { data: settings } = await supabase
-    .schema('physicalgo')
-    .from('user_settings')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle()
+    .schema("physicalgo")
+    .from("user_settings")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
   return (
     <SettingsClient
-      user={{ id: user.id, email: user.email ?? '', name: user.user_metadata?.full_name ?? '', avatar: user.user_metadata?.avatar_url }}
+      user={{
+        id: user.id,
+        email: user.email ?? "",
+        name: user.user_metadata?.full_name ?? "",
+        avatar: user.user_metadata?.avatar_url,
+      }}
       settings={settings}
     />
-  )
+  );
 }

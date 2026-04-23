@@ -1,11 +1,13 @@
-export { Tabs, TabsContent, TabsTrigger } from "@takaki/go-design-system"
+export { Tabs, TabsContent, TabsTrigger } from "@takaki/go-design-system";
 
-import * as React from "react"
-import { TabsList as TabsListBase } from "@takaki/go-design-system"
-import { cn } from "@takaki/go-design-system"
+import * as React from "react";
+import { TabsList as TabsListBase } from "@takaki/go-design-system";
+import { cn } from "@takaki/go-design-system";
 
-interface TabsListProps extends React.ComponentPropsWithoutRef<typeof TabsListBase> {
-  variant?: "default" | "underline"
+interface TabsListProps extends React.ComponentPropsWithoutRef<
+  typeof TabsListBase
+> {
+  variant?: "default" | "underline";
 }
 
 export const TabsList = React.forwardRef<
@@ -15,10 +17,11 @@ export const TabsList = React.forwardRef<
   <TabsListBase
     ref={ref}
     className={cn(
-      variant === "underline" && "h-auto bg-transparent border-b border-border rounded-none p-0 gap-0",
-      className
+      variant === "underline" &&
+        "h-auto bg-transparent border-b border-border rounded-none p-0 gap-0",
+      className,
     )}
     {...props}
   />
-))
-TabsList.displayName = "TabsList"
+));
+TabsList.displayName = "TabsList";

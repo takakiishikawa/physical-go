@@ -1,1 +1,1 @@
-export { Progress } from "@takaki/go-design-system"
+export { Progress } from "@takaki/go-design-system";
