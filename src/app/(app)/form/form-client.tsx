@@ -4,8 +4,8 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button as UIButton } from "@/components/ui/button";
+import { Input as UIInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Camera,
@@ -18,7 +18,7 @@ import {
   X,
   ListChecks,
 } from "lucide-react";
-import { PageHeader, Section, Banner, Spinner } from "@takaki/go-design-system";
+import { PageHeader, Section, Banner, Spinner, Button } from "@takaki/go-design-system";
 import type { Exercise } from "@/types";
 
 interface Props {
@@ -116,9 +116,10 @@ export function FormClient({ exercises }: Props) {
                   EXERCISE_META[ex.name] ?? EXERCISE_META.half_deadlift;
                 const Icon = meta.icon;
                 return (
-                  <button
+                  <Button
                     key={ex.id}
                     onClick={() => setSelectedExercise(isSelected ? null : ex)}
+                    variant="outline"
                     className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
                       isSelected
                         ? "border-primary bg-primary/5"
@@ -135,7 +136,7 @@ export function FormClient({ exercises }: Props) {
                     {isSelected && (
                       <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                     )}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -161,16 +162,17 @@ export function FormClient({ exercises }: Props) {
                       muted
                       playsInline
                     />
-                    <button
+                    <Button
                       onClick={() => {
                         setVideoFile(null);
                         setVideoPreview(null);
                         if (fileRef.current) fileRef.current.value = "";
                       }}
+                      variant="ghost"
                       className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center"
                     >
                       <X className="w-4 h-4 text-white" />
-                    </button>
+                    </Button>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <CheckCircle2 className="w-3.5 h-3.5 text-success" />
@@ -179,34 +181,36 @@ export function FormClient({ exercises }: Props) {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
-                  <button
+                  <Button
                     onClick={() => {
                       if (fileRef.current) {
                         fileRef.current.capture = "environment";
                         fileRef.current.click();
                       }
                     }}
+                    variant="outline"
                     className="flex flex-col items-center gap-2.5 p-5 rounded-lg border-2 border-dashed border-border hover:border-primary/40 hover:bg-muted/30 transition-all"
                   >
                     <Camera className="w-6 h-6 text-muted-foreground" />
                     <span className="text-xs font-medium text-muted-foreground">
                       今すぐ撮影
                     </span>
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => {
                       if (fileRef.current) {
                         fileRef.current.removeAttribute("capture");
                         fileRef.current.click();
                       }
                     }}
+                    variant="outline"
                     className="flex flex-col items-center gap-2.5 p-5 rounded-lg border-2 border-dashed border-border hover:border-primary/40 hover:bg-muted/30 transition-all"
                   >
                     <Upload className="w-6 h-6 text-muted-foreground" />
                     <span className="text-xs font-medium text-muted-foreground">
                       ギャラリーから
                     </span>
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -219,7 +223,7 @@ export function FormClient({ exercises }: Props) {
                   <Label htmlFor="weight" className="text-xs">
                     重量 (kg)
                   </Label>
-                  <Input
+                  <UIInput
                     id="weight"
                     type="number"
                     placeholder="例: 80"
@@ -234,7 +238,7 @@ export function FormClient({ exercises }: Props) {
                 <Label htmlFor="reps" className="text-xs">
                   回数
                 </Label>
-                <Input
+                <UIInput
                   id="reps"
                   type="number"
                   placeholder="例: 5"
@@ -247,7 +251,7 @@ export function FormClient({ exercises }: Props) {
             </div>
           )}
 
-          <Button
+          <UIButton
             onClick={handleAnalyze}
             disabled={loading || !selectedExercise || !videoFile}
             size="lg"
@@ -264,7 +268,7 @@ export function FormClient({ exercises }: Props) {
                 AIでフォームを解析する
               </>
             )}
-          </Button>
+          </UIButton>
         </div>
 
         {/* Right: Guide + Checkpoints */}
