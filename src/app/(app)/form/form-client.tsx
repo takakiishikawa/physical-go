@@ -18,7 +18,13 @@ import {
   X,
   ListChecks,
 } from "lucide-react";
-import { PageHeader, Section, Banner, Spinner, Button } from "@takaki/go-design-system";
+import {
+  PageHeader,
+  Section,
+  Banner,
+  Spinner,
+  Button,
+} from "@takaki/go-design-system";
 import type { Exercise } from "@/types";
 
 interface Props {
