@@ -298,7 +298,7 @@ export function FormClient({ exercises }: Props) {
                         className="flex items-center gap-2.5 text-sm"
                       >
                         <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          <span className="text-[10px] font-bold text-primary">
+                          <span className="text-[10px] font-semibold text-primary">
                             {i + 1}
                           </span>
                         </div>

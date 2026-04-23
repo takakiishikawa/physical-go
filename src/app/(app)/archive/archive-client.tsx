@@ -142,7 +142,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                     const fb = feedbackMap[s.id];
                     return (
                       <div key={s.id} className="space-y-2">
-                        <div className="aspect-video rounded-lg bg-muted overflow-hidden shadow-sm">
+                        <div className="aspect-video rounded-lg bg-muted overflow-hidden border border-border">
                           {s.video_url ? (
                             <video
                               src={s.video_url}
@@ -207,14 +207,14 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                           variant="ghost"
                           className={`w-full text-left rounded-lg overflow-hidden border-2 transition-all p-0 h-auto ${
                             isSelected
-                              ? "border-primary shadow-md ring-2 ring-primary/20"
+                              ? "border-primary border border-border ring-2 ring-primary/20"
                               : "border-transparent"
                           }`}
                         >
                           <SessionCard session={session} feedback={fb} />
                           {isSelected && (
                             <div className="absolute top-2 left-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center">
-                              <span className="text-white text-xs font-bold">
+                              <span className="text-white text-xs font-semibold">
                                 {selIdx + 1}
                               </span>
                             </div>
@@ -222,7 +222,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                         </Button>
                       ) : (
                         <Link href={`/form/${session.id}`}>
-                          <div className="rounded-lg overflow-hidden border border-border hover:border-primary/40 hover:shadow-sm transition-all">
+                          <div className="rounded-lg overflow-hidden border border-border hover:border-primary/40 hover:border border-border transition-all">
                             <SessionCard session={session} feedback={fb} />
                           </div>
                         </Link>

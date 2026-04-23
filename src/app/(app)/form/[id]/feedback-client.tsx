@@ -72,7 +72,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
         {/* Left: Video */}
         <div className="space-y-4">
           {session.video_url ? (
-            <div className="rounded-lg overflow-hidden bg-black aspect-video shadow-sm">
+            <div className="rounded-lg overflow-hidden bg-black aspect-video border border-border">
               <video
                 src={session.video_url}
                 className="w-full h-full object-contain"

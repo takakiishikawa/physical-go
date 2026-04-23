@@ -98,7 +98,7 @@ function AppSwitcher() {
       </Button>
 
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50">
+        <div className="absolute bottom-full left-0 right-0 mb-1 bg-card border border-border rounded-lg border border-border overflow-hidden z-50">
           <div className="px-3 py-2 border-b border-border">
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
               アプリ切り替え
@@ -219,7 +219,7 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-colors min-w-[48px]",
+                "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-[48px]",
                 isActive ? "text-primary" : "text-muted-foreground",
               )}
             >

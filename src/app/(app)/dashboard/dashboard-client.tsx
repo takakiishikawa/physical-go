@@ -199,7 +199,7 @@ export function DashboardClient({
             <div className="pt-2">
               {recentFeedback ? (
                 <Link href={`/form/${recentFeedback.session_id}`}>
-                  <Card className="hover:border-primary/40 hover:shadow-sm transition-all cursor-pointer">
+                  <Card className="hover:border-primary/40 hover:border border-border transition-all cursor-pointer">
                     <CardContent className="p-4 space-y-2">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Badge className="bg-primary/10 text-primary border-0 text-xs">
