@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import { toast } from 'sonner'
+import { toast } from "sonner";
 
 export function useDeleteConfirm() {
   function confirmDelete(onConfirm: () => Promise<void>) {
-    toast('この記録を削除しますか？', {
+    toast("この記録を削除しますか？", {
       action: {
-        label: '削除する',
+        label: "削除する",
         onClick: async () => {
-          await onConfirm()
+          await onConfirm();
         },
       },
-      cancel: { label: 'キャンセル', onClick: () => {} },
-    })
+      cancel: { label: "キャンセル", onClick: () => {} },
+    });
   }
 
-  return { confirmDelete }
+  return { confirmDelete };
 }
