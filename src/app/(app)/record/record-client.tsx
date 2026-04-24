@@ -4,22 +4,18 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import dynamic from 'next/dynamic'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
-import {
-  Dumbbell, Star, ChevronDown, ChevronUp, Trophy,
-  ArrowUpToLine, Zap, History, CheckCircle2, Plus,
-  Pencil, Trash2, Check, X,
-} from 'lucide-react'
-import {
-  PageHeader, Banner, Timeline, Section, ChartArea, EmptyState, Spinner,
-  type TimelineItem,
-} from '@takaki/go-design-system'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Star, Trophy, Check, X, Pencil, Trash2, Plus } from 'lucide-react'
+import { Section, EmptyState, Spinner } from '@takaki/go-design-system'
+import { PageShell } from '@/components/layout/page-shell'
 import type { Exercise, PersonalRecord } from '@/types'
+import { EXERCISE_META, EXERCISE_NAMES } from '@/lib/exercise-meta'
+import { todayStr, toLocalIso } from '@/lib/date-utils'
+import { useDeleteConfirm } from '@/hooks/use-delete-confirm'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
@@ -31,29 +27,16 @@ interface Props {
   userId: string
 }
 
-const EXERCISE_META: Record<string, { icon: React.ElementType; colorVar: string }> = {
-  half_deadlift: { icon: Dumbbell,      colorVar: 'var(--color-exercise-deadlift)' },
-  pull_up:       { icon: ArrowUpToLine, colorVar: 'var(--color-exercise-pullup)' },
-  bench_press:   { icon: Zap,           colorVar: 'var(--color-exercise-benchpress)' },
-}
-
-function todayStr() { return format(new Date(), 'yyyy-MM-dd') }
-function toLocalIso(dateStr: string) {
-  const [y, m, d] = dateStr.split('-').map(Number)
-  return new Date(y, m - 1, d, 12, 0, 0).toISOString()
-}
-
-export function RecordClient({ exercises, personalRecords, userId }: Props) {
+export function RecordClient({ exercises, personalRecords }: Props) {
   const router = useRouter()
   const supabase = createClient()
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null)
+  const { confirmDelete } = useDeleteConfirm()
+
+  const [activeTab, setActiveTab] = useState(exercises[0]?.id ?? '')
   const [recordDate, setRecordDate] = useState(todayStr())
   const [weightInput, setWeightInput] = useState('')
   const [repsInput, setRepsInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [prResult, setPrResult] = useState<{
-    isPR: boolean; prevValue?: number; newValue: number; exerciseName: string
-  } | null>(null)
   const [showConfetti, setShowConfetti] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editDate, setEditDate] = useState('')
@@ -72,9 +55,8 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
       : Math.max(...records.map(r => r.weight_kg ?? 0))
   }, [getExerciseRecords])
 
-  const handleSubmit = async () => {
-    if (!selectedExercise) return
-    const isPullUp = selectedExercise.name === 'pull_up'
+  const handleSubmit = async (ex: Exercise) => {
+    const isPullUp = ex.name === EXERCISE_NAMES.PULL_UP
     const value = isPullUp ? Number(repsInput) : Number(weightInput)
     if (!value || value <= 0) { toast.error('値を入力してください'); return }
     setLoading(true)
@@ -83,8 +65,8 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          exercise_id: selectedExercise.id,
-          exercise_name: selectedExercise.name,
+          exercise_id: ex.id,
+          exercise_name: ex.name,
           weight_kg: isPullUp ? null : value,
           reps: isPullUp ? value : null,
           record_type: isPullUp ? 'max_reps' : 'weight_5rep',
@@ -93,9 +75,20 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      const prevBest = getLatestPR(selectedExercise.id, isPullUp)
-      setPrResult({ isPR: data.is_pr, prevValue: prevBest ?? undefined, newValue: value, exerciseName: selectedExercise.name_ja })
-      if (data.is_pr) { setShowConfetti(true); setTimeout(() => setShowConfetti(false), 4000) }
+
+      const unit = isPullUp ? '回' : 'kg'
+      if (data.is_pr) {
+        const prevBest = getLatestPR(ex.id, isPullUp)
+        const desc = prevBest
+          ? `${prevBest}${unit} → ${value}${unit}`
+          : `${value}${unit} でスタート`
+        toast.success(`${ex.name_ja} 自己ベスト更新！🎉`, { description: desc })
+        setShowConfetti(true)
+        setTimeout(() => setShowConfetti(false), 4000)
+      } else {
+        toast.success('今日も積み上げた 💪')
+      }
+
       setWeightInput(''); setRepsInput('')
       router.refresh()
     } catch (e: any) {
@@ -135,217 +128,152 @@ export function RecordClient({ exercises, personalRecords, userId }: Props) {
   }
 
   const handleDelete = (id: string) => {
-    toast('この記録を削除しますか？', {
-      action: {
-        label: '削除する',
-        onClick: async () => {
-          const { error } = await supabase.schema('physicalgo').from('personal_records').delete().eq('id', id)
-          if (error) { toast.error('削除に失敗しました'); return }
-          toast.success('削除しました')
-          router.refresh()
-        },
-      },
-      cancel: { label: 'キャンセル', onClick: () => {} },
+    confirmDelete(async () => {
+      const { error } = await supabase.schema('physicalgo').from('personal_records').delete().eq('id', id)
+      if (error) { toast.error('削除に失敗しました'); return }
+      toast.success('削除しました')
+      router.refresh()
     })
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <PageShell title="記録">
       {showConfetti && <ConfettiComponent />}
 
-      <PageHeader title="自己ベスト記録" description="種目を選んで記録を残そう" />
-
-      {prResult && (
-        <Banner
-          variant={prResult.isPR ? 'success' : 'info'}
-          title={prResult.isPR ? '自己ベスト更新！' : '今日も積み上げた'}
-          description={
-            prResult.isPR && prResult.prevValue
-              ? `${prResult.prevValue}${prResult.exerciseName === '懸垂' ? '回' : 'kg'} → ${prResult.newValue}${prResult.exerciseName === '懸垂' ? '回' : 'kg'}`
-              : prResult.isPR
-                ? `${prResult.newValue}${prResult.exerciseName === '懸垂' ? '回' : 'kg'} で記録開始`
-                : undefined
-          }
-          dismissible
-          onDismiss={() => setPrResult(null)}
-        />
-      )}
-
-      <div className="grid md:grid-cols-3 gap-6">
-        {/* Left: Exercise selection + form */}
-        <div className="md:col-span-1 space-y-4">
-          <Section title="種目を選択" variant="default">
-            <div className="space-y-2 pt-2">
-              {exercises.map(ex => {
-                const isPullUp = ex.name === 'pull_up'
-                const latestPR = getLatestPR(ex.id, isPullUp)
-                const isSelected = selectedExercise?.id === ex.id
-                const meta = EXERCISE_META[ex.name] ?? EXERCISE_META.half_deadlift
-                const Icon = meta.icon
-                return (
-                  <button
-                    key={ex.id}
-                    onClick={() => { setSelectedExercise(isSelected ? null : ex); setPrResult(null) }}
-                    className={`w-full flex items-center gap-3 p-3.5 rounded-lg border-2 text-left transition-all ${
-                      isSelected ? 'border-primary bg-primary/5' : 'border-border bg-card hover:border-primary/30'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4 shrink-0" style={{ color: meta.colorVar }} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{ex.name_ja}</p>
-                      {latestPR !== null && (
-                        <p className="text-xs text-muted-foreground">現在 {latestPR}{isPullUp ? '回' : 'kg'}</p>
-                      )}
-                    </div>
-                    {isSelected && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
-                  </button>
-                )
-              })}
-            </div>
-          </Section>
-
-          {selectedExercise && (() => {
-            const isPullUp = selectedExercise.name === 'pull_up'
-            const meta = EXERCISE_META[selectedExercise.name] ?? EXERCISE_META.half_deadlift
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList variant="underline">
+          {exercises.map(ex => {
+            const meta = EXERCISE_META[ex.name] ?? EXERCISE_META.half_deadlift
             const Icon = meta.icon
             return (
-              <Card className="border-primary/30 animate-in fade-in">
-                <CardHeader className="pb-3 pt-4 px-4">
-                  <CardTitle className="text-sm flex items-center gap-2">
-                    <Icon className="w-4 h-4" style={{ color: meta.colorVar }} />
-                    {selectedExercise.name_ja} を記録
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="px-4 pb-4 space-y-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="recordDate" className="text-xs">記録日</Label>
-                    <Input id="recordDate" type="date" value={recordDate}
-                      onChange={e => setRecordDate(e.target.value)} className="h-10" max={todayStr()} />
-                  </div>
-                  {isPullUp ? (
-                    <div className="space-y-1.5">
-                      <Label htmlFor="reps" className="text-xs">回数</Label>
-                      <div className="flex gap-2 items-center">
-                        <Input id="reps" type="number" placeholder="例: 10" value={repsInput}
-                          onChange={e => setRepsInput(e.target.value)} inputMode="numeric" className="h-11 text-lg" />
-                        <span className="text-sm text-muted-foreground font-medium shrink-0">回</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-1.5">
-                      <Label htmlFor="weight" className="text-xs">重量（5回以上できた最大重量）</Label>
-                      <div className="flex gap-2 items-center">
-                        <Input id="weight" type="number" placeholder="例: 80" value={weightInput}
-                          onChange={e => setWeightInput(e.target.value)} inputMode="decimal" className="h-11 text-lg" />
-                        <span className="text-sm text-muted-foreground font-medium shrink-0">kg</span>
-                      </div>
-                    </div>
-                  )}
-                  <Button onClick={handleSubmit} disabled={loading} className="w-full" size="lg">
-                    {loading ? <><Spinner size="sm" />記録中...</> : <><Plus className="w-4 h-4" />記録する</>}
-                  </Button>
-                </CardContent>
-              </Card>
+              <TabsTrigger key={ex.id} value={ex.id} className="flex items-center gap-1.5">
+                <Icon className="w-3.5 h-3.5" style={{ color: meta.colorVar }} />
+                {ex.name_ja}
+              </TabsTrigger>
             )
-          })()}
-        </div>
+          })}
+        </TabsList>
 
-        {/* Right: History */}
-        <div className="md:col-span-2 space-y-5">
-          {exercises.every(ex => getExerciseRecords(ex.id).length === 0) ? (
-            <EmptyState
-              icon={<Trophy className="w-10 h-10" />}
-              title="まだ記録がありません"
-              description="左から種目を選んで最初の記録をしよう"
-              className="py-16"
-            />
-          ) : (
-            exercises.map(ex => {
-              const isPullUp = ex.name === 'pull_up'
-              const records = getExerciseRecords(ex.id)
-              if (records.length === 0) return null
-              const meta = EXERCISE_META[ex.name] ?? EXERCISE_META.half_deadlift
-              const Icon = meta.icon
+        {exercises.map(ex => {
+          const isPullUp = ex.name === EXERCISE_NAMES.PULL_UP
+          const records = getExerciseRecords(ex.id)
+          const sortedRecords = records
+            .slice()
+            .sort((a, b) => new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime())
 
-              const chartData = records
-                .slice().sort((a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime())
-                .map(r => ({ date: r.recorded_at, value: Number(isPullUp ? r.reps : r.weight_kg) || 0 }))
-
-              const timelineItems: TimelineItem[] = records
-                .slice().sort((a, b) => new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime())
-                .map(r => ({
-                  id: r.id,
-                  title: isPullUp ? `${r.reps}回` : `${r.weight_kg}kg`,
-                  timestamp: format(new Date(r.recorded_at), 'M月d日(E)', { locale: ja }),
-                  variant: r.is_pr ? 'success' : 'default',
-                  icon: r.is_pr ? <Star className="w-3 h-3" /> : undefined,
-                  description: editingId === r.id ? (
-                    <div className="space-y-2 mt-2">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="space-y-1">
-                          <Label className="text-xs">記録日</Label>
-                          <Input type="date" value={editDate} onChange={e => setEditDate(e.target.value)}
-                            className="h-8 text-sm" max={todayStr()} />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">{isPullUp ? '回数' : '重量(kg)'}</Label>
-                          {isPullUp ? (
-                            <Input type="number" value={editReps} onChange={e => setEditReps(e.target.value)}
-                              inputMode="numeric" className="h-8 text-sm" />
-                          ) : (
-                            <Input type="number" value={editWeight} onChange={e => setEditWeight(e.target.value)}
-                              inputMode="decimal" className="h-8 text-sm" />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => setEditingId(null)}>
-                          <X className="w-3 h-3 mr-1" />キャンセル
-                        </Button>
-                        <Button size="sm" className="flex-1 text-xs" onClick={() => handleUpdate(isPullUp)} disabled={editLoading}>
-                          {editLoading ? <><Spinner size="sm" />更新中...</> : <><Check className="w-3 h-3" />保存</>}
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex gap-1 mt-1">
-                      <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground" onClick={() => startEdit(r)}>
-                        <Pencil className="w-3 h-3" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={() => handleDelete(r.id)}>
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ),
-                }))
-
-              return (
-                <Section
-                  key={ex.id}
-                  title={ex.name_ja}
-                  description={`${records.length}件の記録`}
-                  variant="bordered"
-                >
-                  <div className="space-y-4 pt-3">
-                    {chartData.length > 1 && (
-                      <ChartArea
-                        data={chartData}
-                        config={{ value: { label: isPullUp ? '回数' : '重量(kg)', color: meta.colorVar } }}
-                        xKey="date"
-                        yKeys={['value']}
-                        filterByDate={false}
-                        xTickFormatter={(v) => format(new Date(v), 'M/d')}
-                        tooltipLabelFormatter={(v) => format(new Date(v), 'M月d日', { locale: ja })}
+          return (
+            <TabsContent key={ex.id} value={ex.id} className="mt-5 space-y-5">
+              <div className="bg-muted/40 rounded-lg border border-border p-4">
+                <div className="flex flex-wrap gap-3 items-end">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">記録日</Label>
+                    <Input
+                      type="date"
+                      value={recordDate}
+                      onChange={e => setRecordDate(e.target.value)}
+                      className="h-9 w-36"
+                      max={todayStr()}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">
+                      {isPullUp ? '回数' : '重量（5回以上できた最大重量）'}
+                    </Label>
+                    <div className="flex items-center gap-1.5">
+                      <Input
+                        type="number"
+                        placeholder={isPullUp ? '例: 10' : '例: 80'}
+                        value={isPullUp ? repsInput : weightInput}
+                        onChange={e => isPullUp ? setRepsInput(e.target.value) : setWeightInput(e.target.value)}
+                        inputMode={isPullUp ? 'numeric' : 'decimal'}
+                        className="h-9 w-28"
                       />
-                    )}
-                    <Timeline items={timelineItems} />
+                      <span className="text-sm text-muted-foreground">{isPullUp ? '回' : 'kg'}</span>
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => handleSubmit(ex)}
+                    disabled={loading}
+                    size="sm"
+                    className="gap-1.5 h-9"
+                  >
+                    {loading ? <><Spinner size="sm" />登録中...</> : <><Plus className="w-3.5 h-3.5" />ベストを登録する</>}
+                  </Button>
+                </div>
+              </div>
+
+              {records.length === 0 ? (
+                <EmptyState
+                  icon={<Trophy className="w-10 h-10" />}
+                  title="まだ記録がありません"
+                  description="上のフォームから最初の記録を追加しよう"
+                />
+              ) : (
+                <Section title="記録" description={`${records.length}件`} variant="bordered">
+                  <div className="divide-y divide-border">
+                    {sortedRecords.map(r => (
+                      <div key={r.id}>
+                        {editingId === r.id ? (
+                          <div className="py-3 space-y-3">
+                            <div className="flex flex-wrap gap-3">
+                              <div className="space-y-1">
+                                <Label className="text-xs">記録日</Label>
+                                <Input type="date" value={editDate} onChange={e => setEditDate(e.target.value)}
+                                  className="h-8 w-36 text-sm" max={todayStr()} />
+                              </div>
+                              <div className="space-y-1">
+                                <Label className="text-xs">{isPullUp ? '回数' : '重量(kg)'}</Label>
+                                <div className="flex items-center gap-1">
+                                  {isPullUp ? (
+                                    <Input type="number" value={editReps} onChange={e => setEditReps(e.target.value)}
+                                      inputMode="numeric" className="h-8 w-24 text-sm" />
+                                  ) : (
+                                    <Input type="number" value={editWeight} onChange={e => setEditWeight(e.target.value)}
+                                      inputMode="decimal" className="h-8 w-24 text-sm" />
+                                  )}
+                                  <span className="text-xs text-muted-foreground">{isPullUp ? '回' : 'kg'}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" className="text-xs" onClick={() => setEditingId(null)}>
+                                <X className="w-3 h-3 mr-1" />キャンセル
+                              </Button>
+                              <Button size="sm" className="text-xs" onClick={() => handleUpdate(isPullUp)} disabled={editLoading}>
+                                {editLoading ? <><Spinner size="sm" />更新中...</> : <><Check className="w-3 h-3" />保存</>}
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between py-2.5">
+                            <div className="flex items-center gap-2.5">
+                              {r.is_pr && <Star className="w-3.5 h-3.5 text-warning shrink-0" />}
+                              <span className="text-sm font-medium tabular-nums">
+                                {isPullUp ? `${r.reps}回` : `${r.weight_kg}kg`}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {format(new Date(r.recorded_at), 'M/d(E)', { locale: ja })}
+                              </span>
+                            </div>
+                            <div className="flex gap-0.5">
+                              <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground" onClick={() => startEdit(r)}>
+                                <Pencil className="w-3 h-3" />
+                              </Button>
+                              <Button variant="ghost" size="icon" className="w-7 h-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={() => handleDelete(r.id)}>
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </Section>
-              )
-            })
-          )}
-        </div>
-      </div>
-    </div>
+              )}
+            </TabsContent>
+          )
+        })}
+      </Tabs>
+    </PageShell>
   )
 }

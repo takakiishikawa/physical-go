@@ -6,22 +6,18 @@ import { useRouter } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Columns2, Video, Dumbbell, ArrowUpToLine, Zap } from 'lucide-react'
-import { PageHeader, Banner, Section, EmptyState } from '@takaki/go-design-system'
+import { Columns2, Video } from 'lucide-react'
+import { Banner, Section, EmptyState } from '@takaki/go-design-system'
+import { PageShell } from '@/components/layout/page-shell'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import type { Exercise, FormSession } from '@/types'
+import { EXERCISE_META } from '@/lib/exercise-meta'
 
 interface Props {
   exercises: Exercise[]
   sessions: FormSession[]
   feedbacks: { session_id: string; overall_comment: string | null; created_at: string }[]
-}
-
-const EXERCISE_META: Record<string, { icon: React.ElementType; colorVar: string }> = {
-  half_deadlift: { icon: Dumbbell,      colorVar: 'var(--color-exercise-deadlift)' },
-  pull_up:       { icon: ArrowUpToLine, colorVar: 'var(--color-exercise-pullup)' },
-  bench_press:   { icon: Zap,           colorVar: 'var(--color-exercise-benchpress)' },
 }
 
 export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
@@ -43,22 +39,21 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
   const compareB = sessions.find(s => s.id === selected[1])
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <PageHeader
-        title="フォームアーカイブ"
-        description="過去のフォームチェックを振り返ろう"
-        actions={
-          <Button
-            variant={compareMode ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => { setCompareMode(!compareMode); setSelected([]) }}
-            className="gap-1.5"
-          >
-            <Columns2 className="w-3.5 h-3.5" />
-            {compareMode ? '比較中' : '比較する'}
-          </Button>
-        }
-      />
+    <PageShell
+      title="フォームアーカイブ"
+      description="過去のフォームチェックを振り返ろう"
+      actions={
+        <Button
+          variant={compareMode ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => { setCompareMode(!compareMode); setSelected([]) }}
+          className="gap-1.5"
+        >
+          <Columns2 className="w-3.5 h-3.5" />
+          {compareMode ? '比較中' : '比較する'}
+        </Button>
+      }
+    >
 
       {compareMode && (
         <Banner
@@ -161,7 +156,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
           </TabsContent>
         ))}
       </Tabs>
-    </div>
+    </PageShell>
   )
 }
 
