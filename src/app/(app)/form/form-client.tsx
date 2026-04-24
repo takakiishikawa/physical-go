@@ -194,7 +194,7 @@ export function FormClient({ sessions, feedbacks }: Props) {
               const meta = exName ? EXERCISE_META[exName] : null;
               return (
                 <Link key={session.id} href={`/form/${session.id}`}>
-                  <div className="rounded-lg overflow-hidden border border-border hover:border-primary/40 hover:shadow-sm transition-all">
+                  <div className="rounded-lg overflow-hidden border border-border hover:border-primary/40 hover:border border-border transition-all">
                     <div className="aspect-video bg-muted overflow-hidden">
                       {session.video_url ? (
                         <video

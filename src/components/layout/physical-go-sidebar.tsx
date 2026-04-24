@@ -164,7 +164,7 @@ export function PhysicalGoSidebar() {
                     />
                   ) : (
                     <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <span className="text-[10px] font-bold text-primary">
+                      <span className="text-[10px] font-semibold text-primary">
                         {userProfile.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
