@@ -9,27 +9,19 @@ export default async function FormPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/");
 
-  const [
-    { data: sessions },
-    { data: feedbacks },
-  ] = await Promise.all([
+  const [{ data: sessions }, { data: feedbacks }] = await Promise.all([
     supabase
-      .schema('physicalgo')
-      .from('form_sessions')
-      .select('*, exercises(*)')
-      .eq('user_id', user.id)
-      .order('recorded_at', { ascending: false }),
+      .schema("physicalgo")
+      .from("form_sessions")
+      .select("*, exercises(*)")
+      .eq("user_id", user.id)
+      .order("recorded_at", { ascending: false }),
     supabase
-      .schema('physicalgo')
-      .from('form_feedbacks')
-      .select('session_id, overall_comment, created_at')
-      .eq('user_id', user.id),
-  ])
+      .schema("physicalgo")
+      .from("form_feedbacks")
+      .select("session_id, overall_comment, created_at")
+      .eq("user_id", user.id),
+  ]);
 
-  return (
-    <FormClient
-      sessions={sessions ?? []}
-      feedbacks={feedbacks ?? []}
-    />
-  )
+  return <FormClient sessions={sessions ?? []} feedbacks={feedbacks ?? []} />;
 }

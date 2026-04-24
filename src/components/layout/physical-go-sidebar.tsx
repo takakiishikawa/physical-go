@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -30,49 +30,76 @@ import { createClient } from "@/lib/supabase/client";
 
 const MAIN_NAV = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ダッシュボード" },
-  { href: "/record",    icon: Dumbbell,        label: "記録" },
-  { href: "/form",      icon: Video,           label: "フォーム" },
-  { href: "/body",      icon: Scale,           label: "ボディ" },
-]
+  { href: "/record", icon: Dumbbell, label: "記録" },
+  { href: "/form", icon: Video, label: "フォーム" },
+  { href: "/body", icon: Scale, label: "ボディ" },
+];
 
 const FOOTER_NAV = [
-  { href: "/concept",   icon: Lightbulb,       label: "コンセプト" },
-  { href: "/settings",  icon: Settings,        label: "設定" },
-]
+  { href: "/concept", icon: Lightbulb, label: "コンセプト" },
+  { href: "/settings", icon: Settings, label: "設定" },
+];
 
 const GO_APPS: AppInfo[] = [
-  { name: "NativeGo",      url: "https://english-learning-app-black.vercel.app/", color: "#E5484D" },
-  { name: "CareGo",        url: "https://care-go-mu.vercel.app/dashboard",        color: "#30A46C" },
-  { name: "KenyakuGo",     url: "https://kenyaku-go.vercel.app/",                 color: "#F5A623" },
-  { name: "TaskGo",        url: "https://taskgo-dun.vercel.app/",                 color: "#5E6AD2" },
-  { name: "CookGo",        url: "https://cook-go-lovat.vercel.app/dashboard",     color: "#1AD1A5" },
-  { name: "PhysicalGo",    url: "https://physical-go.vercel.app/dashboard",       color: "#0052CC" },
-  { name: "Design System", url: "https://go-design-system.vercel.app",            color: "#6B7280" },
-]
+  {
+    name: "NativeGo",
+    url: "https://english-learning-app-black.vercel.app/",
+    color: "#E5484D",
+  },
+  {
+    name: "CareGo",
+    url: "https://care-go-mu.vercel.app/dashboard",
+    color: "#30A46C",
+  },
+  {
+    name: "KenyakuGo",
+    url: "https://kenyaku-go.vercel.app/",
+    color: "#F5A623",
+  },
+  { name: "TaskGo", url: "https://taskgo-dun.vercel.app/", color: "#5E6AD2" },
+  {
+    name: "CookGo",
+    url: "https://cook-go-lovat.vercel.app/dashboard",
+    color: "#1AD1A5",
+  },
+  {
+    name: "PhysicalGo",
+    url: "https://physical-go.vercel.app/dashboard",
+    color: "#0052CC",
+  },
+  {
+    name: "Design System",
+    url: "https://go-design-system.vercel.app",
+    color: "#6B7280",
+  },
+];
 
 interface UserProfile {
-  name: string
-  email: string
-  avatar?: string
+  name: string;
+  email: string;
+  avatar?: string;
 }
 
 export function PhysicalGoSidebar() {
-  const pathname = usePathname()
-  const router = useRouter()
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
+  const pathname = usePathname();
+  const router = useRouter();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
-    const supabase = createClient()
+    const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
         setUserProfile({
-          name: user.user_metadata?.full_name ?? user.email?.split('@')[0] ?? 'User',
-          email: user.email ?? '',
+          name:
+            user.user_metadata?.full_name ??
+            user.email?.split("@")[0] ??
+            "User",
+          email: user.email ?? "",
           avatar: user.user_metadata?.avatar_url,
-        })
+        });
       }
-    })
-  }, [])
+    });
+  }, []);
 
   function isActive(href: string) {
     return pathname === href || pathname.startsWith(href + "/");
@@ -143,8 +170,12 @@ export function PhysicalGoSidebar() {
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">{userProfile.name}</p>
-                    <p className="text-[10px] text-muted-foreground truncate">{userProfile.email}</p>
+                    <p className="text-xs font-medium truncate">
+                      {userProfile.name}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground truncate">
+                      {userProfile.email}
+                    </p>
                   </div>
                 </Link>
               </SidebarMenuButton>

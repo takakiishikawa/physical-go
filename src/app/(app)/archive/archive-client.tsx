@@ -1,18 +1,18 @@
 "use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Columns2, Video } from 'lucide-react'
-import { Banner, Section, EmptyState } from '@takaki/go-design-system'
-import { PageShell } from '@/components/layout/page-shell'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
-import type { Exercise, FormSession } from '@/types'
-import { EXERCISE_META } from '@/lib/exercise-meta'
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Columns2, Video } from "lucide-react";
+import { Banner, Section, EmptyState } from "@takaki/go-design-system";
+import { PageShell } from "@/components/layout/page-shell";
+import { format } from "date-fns";
+import { ja } from "date-fns/locale";
+import type { Exercise, FormSession } from "@/types";
+import { EXERCISE_META } from "@/lib/exercise-meta";
 
 interface Props {
   exercises: Exercise[];
@@ -53,17 +53,19 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
       description="過去のフォームチェックを振り返ろう"
       actions={
         <Button
-          variant={compareMode ? 'default' : 'outline'}
+          variant={compareMode ? "default" : "outline"}
           size="sm"
-          onClick={() => { setCompareMode(!compareMode); setSelected([]) }}
+          onClick={() => {
+            setCompareMode(!compareMode);
+            setSelected([]);
+          }}
           className="gap-1.5"
         >
           <Columns2 className="w-3.5 h-3.5" />
-          {compareMode ? '比較中' : '比較する'}
+          {compareMode ? "比較中" : "比較する"}
         </Button>
       }
     >
-
       {compareMode && (
         <Banner
           variant={selected.length === 2 ? "success" : "info"}
@@ -219,7 +221,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
         ))}
       </Tabs>
     </PageShell>
-  )
+  );
 }
 
 function SessionCard({
