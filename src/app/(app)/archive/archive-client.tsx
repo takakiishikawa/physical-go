@@ -3,11 +3,27 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Columns2, Video, Archive } from "lucide-react";
-import { Banner, Section, EmptyState } from "@takaki/go-design-system";
+import { toast } from "sonner";
+import { Columns2, Video, Archive, Trash2 } from "lucide-react";
+import {
+  Badge,
+  Button,
+  Tabs,
+  TabsTrigger,
+  TabsContent,
+  Banner,
+  Section,
+  EmptyState,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@takaki/go-design-system";
+import { TabsList } from "@/components/ui/tabs";
 import { PageShell } from "@/components/layout/page-shell";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -29,6 +45,31 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
   const [activeTab, setActiveTab] = useState(exercises[0]?.name ?? "");
   const [compareMode, setCompareMode] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/form/${deleteTargetId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        throw new Error(data.error ?? "削除に失敗しました");
+      }
+      toast.success("削除しました");
+      setDeleteTargetId(null);
+      router.refresh();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "削除に失敗しました");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const activeExercise = exercises.find((e) => e.name === activeTab);
   const filteredSessions = sessions.filter(
@@ -186,7 +227,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                   const isSelected = selected.includes(session.id);
                   const selIdx = selected.indexOf(session.id);
                   return (
-                    <div key={session.id} className="relative">
+                    <div key={session.id} className="group relative">
                       {compareMode ? (
                         <Button
                           onClick={() => toggleSelect(session.id)}
@@ -207,11 +248,24 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                           )}
                         </Button>
                       ) : (
-                        <Link href={`/form/${session.id}`}>
-                          <div className="rounded-lg overflow-hidden border border-border hover:border-primary/40 hover:border border-border transition-all">
-                            <SessionCard session={session} feedback={fb} />
-                          </div>
-                        </Link>
+                        <>
+                          <Link href={`/form/${session.id}`}>
+                            <div className="rounded-lg overflow-hidden border border-border hover:border-primary/40 hover:border border-border transition-all">
+                              <SessionCard session={session} feedback={fb} />
+                            </div>
+                          </Link>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setDeleteTargetId(session.id);
+                            }}
+                            className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/60 backdrop-blur text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-destructive transition-all"
+                            aria-label="削除"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </>
                       )}
                     </div>
                   );
@@ -221,6 +275,35 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
           </TabsContent>
         ))}
       </Tabs>
+
+      <AlertDialog
+        open={deleteTargetId !== null}
+        onOpenChange={(open) => !open && setDeleteTargetId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>このフォームチェックを削除しますか？</AlertDialogTitle>
+            <AlertDialogDescription>
+              動画とフィードバックがすべて削除されます。この操作は取り消せません。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>
+              キャンセル
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "削除中..." : "削除する"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageShell>
   );
 }

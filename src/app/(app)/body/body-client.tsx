@@ -3,12 +3,12 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { Scale, Plus } from "lucide-react";
 import {
+  Button,
+  Input,
+  Label,
   SectionCards,
   EmptyState,
   Spinner,
