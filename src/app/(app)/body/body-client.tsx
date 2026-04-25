@@ -15,7 +15,7 @@ import {
   type KpiCard,
 } from "@takaki/go-design-system";
 import { PageShell } from "@/components/layout/page-shell";
-import { MetricChart } from "@/components/ui/metric-chart";
+import { MetricChart } from "@/components/metric-chart";
 import { todayStr, toLocalIso } from "@/lib/date-utils";
 import { subDays, format } from "date-fns";
 import { ja } from "date-fns/locale";
@@ -125,7 +125,6 @@ export function BodyClient({ bodyRecords, userId }: Props) {
 
   return (
     <PageShell title="ボディ" icon={<Scale className="w-6 h-6" />}>
-      {/* Inline add form */}
       <div className="bg-muted/40 rounded-lg border border-border p-4">
         <div className="flex flex-wrap gap-3 items-end">
           <div className="space-y-1.5">
