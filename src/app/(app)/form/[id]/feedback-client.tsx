@@ -116,7 +116,8 @@ function normalizeImprovement(item: ImprovementInput): ImprovementItem {
 function ScoreRing({ score }: { score: number }) {
   const radius = 38;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (Math.max(0, Math.min(100, score)) / 100) * circumference;
+  const offset =
+    circumference - (Math.max(0, Math.min(100, score)) / 100) * circumference;
   const color =
     score >= 85
       ? "var(--color-success)"
@@ -176,7 +177,9 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
   > | null;
 
   const checkpointEntries = checkpoints ? Object.entries(checkpoints) : [];
-  const okCount = checkpointEntries.filter(([, cp]) => cp.result === "OK").length;
+  const okCount = checkpointEntries.filter(
+    ([, cp]) => cp.result === "OK",
+  ).length;
   const improveCount = checkpointEntries.filter(
     ([, cp]) => cp.result === "要改善",
   ).length;
@@ -485,7 +488,9 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>このフォームチェックを削除しますか？</AlertDialogTitle>
+            <AlertDialogTitle>
+              このフォームチェックを削除しますか？
+            </AlertDialogTitle>
             <AlertDialogDescription>
               動画とフィードバックがすべて削除されます。この操作は取り消せません。
             </AlertDialogDescription>

@@ -122,8 +122,16 @@ interface AIResponse {
   overall_rating: "excellent" | "good" | "fair" | "needs_work";
   score: number;
   strengths: string[];
-  improvements: { title: string; detail: string; severity: "high" | "medium" | "low" }[];
-  checkpoints: { name: string; result: "OK" | "要改善" | "確認不可"; comment: string }[];
+  improvements: {
+    title: string;
+    detail: string;
+    severity: "high" | "medium" | "low";
+  }[];
+  checkpoints: {
+    name: string;
+    result: "OK" | "要改善" | "確認不可";
+    comment: string;
+  }[];
   previous_comparison: string;
 }
 
@@ -232,7 +240,9 @@ ${prevContext}`;
 
   const imageBlocks: Anthropic.ImageBlockParam[] = frames
     .map((dataUrl, idx): Anthropic.ImageBlockParam | null => {
-      const match = dataUrl.match(/^data:(image\/(?:jpeg|png|webp));base64,(.+)$/);
+      const match = dataUrl.match(
+        /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/,
+      );
       if (!match) return null;
       const mediaType = match[1] as "image/jpeg" | "image/png" | "image/webp";
       const data = match[2];
@@ -254,10 +264,12 @@ ${prevContext}`;
 
   const userContent: Anthropic.ContentBlockParam[] = [
     { type: "text", text: userText },
-    ...imageBlocks.map((img, idx): Anthropic.ContentBlockParam[] => [
-      { type: "text", text: `フレーム ${idx + 1}/${imageBlocks.length}` },
-      img,
-    ]).flat(),
+    ...imageBlocks
+      .map((img, idx): Anthropic.ContentBlockParam[] => [
+        { type: "text", text: `フレーム ${idx + 1}/${imageBlocks.length}` },
+        img,
+      ])
+      .flat(),
   ];
 
   let aiResponse: AIResponse;
@@ -311,7 +323,8 @@ ${prevContext}`;
   if (sessionError)
     return NextResponse.json({ error: sessionError.message }, { status: 500 });
 
-  const checkpointsObj: Record<string, { result: string; comment: string }> = {};
+  const checkpointsObj: Record<string, { result: string; comment: string }> =
+    {};
   for (const cp of aiResponse.checkpoints) {
     checkpointsObj[cp.name] = { result: cp.result, comment: cp.comment };
   }
