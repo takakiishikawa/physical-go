@@ -1,11 +1,5 @@
 const CACHE_NAME = "physicalgo-v3";
-const STATIC_ASSETS = [
-  "/dashboard",
-  "/form",
-  "/archive",
-  "/body",
-  "/settings",
-];
+const STATIC_ASSETS = ["/dashboard", "/form", "/archive", "/body", "/settings"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

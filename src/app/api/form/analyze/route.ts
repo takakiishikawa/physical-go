@@ -36,7 +36,10 @@ export async function POST(request: Request) {
 
   const { videoPath, videoUrl, fileName, fileSize } = body;
   if (!videoPath || !videoUrl || !fileName) {
-    return NextResponse.json({ error: "動画情報が不足しています" }, { status: 400 });
+    return NextResponse.json(
+      { error: "動画情報が不足しています" },
+      { status: 400 },
+    );
   }
 
   // Security: path must belong to current user (prevents pointing at someone else's file)
