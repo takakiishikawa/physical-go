@@ -8,10 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Camera, Upload, Play, CheckCircle2, X, Video } from "lucide-react";
 import { Section, EmptyState, Spinner } from "@takaki/go-design-system";
 import { PageShell } from "@/components/layout/page-shell";
+import { createClient } from "@/lib/supabase/client";
 import type { FormSession } from "@/types";
 import { EXERCISE_META } from "@/lib/exercise-meta";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
+
+const MAX_VIDEO_SIZE_MB = 50;
 
 interface Props {
   sessions: (FormSession & {
@@ -44,6 +47,10 @@ export function FormClient({ sessions, feedbacks }: Props) {
       toast.error("動画ファイルを選択してください");
       return;
     }
+    if (file.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) {
+      toast.error(`動画サイズが大きすぎます（${MAX_VIDEO_SIZE_MB}MBまで）`);
+      return;
+    }
     setVideoFile(file);
     setVideoPreview(URL.createObjectURL(file));
   };
@@ -62,19 +69,58 @@ export function FormClient({ sessions, feedbacks }: Props) {
     setLoading(true);
     setLoadingStep("動画をアップロード中...");
     try {
-      const formData = new FormData();
-      formData.append("video", videoFile);
+      const supabase = createClient();
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+      if (userError || !user) throw new Error("ログインが必要です");
+
+      const safeName = videoFile.name.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const videoPath = `${user.id}/videos/${Date.now()}-${safeName}`;
+      const { error: uploadError } = await supabase.storage
+        .from("physicalgo")
+        .upload(videoPath, videoFile, {
+          contentType: videoFile.type,
+          upsert: false,
+        });
+      if (uploadError) {
+        throw new Error(`アップロードに失敗しました: ${uploadError.message}`);
+      }
+      const {
+        data: { publicUrl: videoUrl },
+      } = supabase.storage.from("physicalgo").getPublicUrl(videoPath);
+
       setLoadingStep("AIがフォームを解析中...");
       const res = await fetch("/api/form/analyze", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          videoPath,
+          videoUrl,
+          fileName: videoFile.name,
+          fileSize: videoFile.size,
+        }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+
+      const text = await res.text();
+      let data: { session_id?: string; error?: string };
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(
+          res.status === 413
+            ? "ファイルが大きすぎます"
+            : `サーバーエラー (${res.status})`,
+        );
+      }
+      if (!res.ok || !data.session_id)
+        throw new Error(data.error ?? "解析に失敗しました");
+
       toast.success("フォーム解析完了");
       router.push(`/form/${data.session_id}`);
-    } catch (e: any) {
-      toast.error(e.message ?? "解析に失敗しました");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "解析に失敗しました");
     } finally {
       setLoading(false);
       setLoadingStep("");

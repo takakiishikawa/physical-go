@@ -9,6 +9,13 @@ const anthropic = new Anthropic({
 
 export const maxDuration = 60;
 
+interface AnalyzeRequest {
+  videoPath: string;
+  videoUrl: string;
+  fileName: string;
+  fileSize: number;
+}
+
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -17,14 +24,26 @@ export async function POST(request: Request) {
   if (!user)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const formData = await request.formData();
-  const videoFile = formData.get("video") as File | null;
-
-  if (!videoFile) {
-    return NextResponse.json({ error: "動画が必要です" }, { status: 400 });
+  let body: AnalyzeRequest;
+  try {
+    body = (await request.json()) as AnalyzeRequest;
+  } catch {
+    return NextResponse.json(
+      { error: "リクエスト形式が不正です" },
+      { status: 400 },
+    );
   }
 
-  // Fetch all available exercises
+  const { videoPath, videoUrl, fileName, fileSize } = body;
+  if (!videoPath || !videoUrl || !fileName) {
+    return NextResponse.json({ error: "動画情報が不足しています" }, { status: 400 });
+  }
+
+  // Security: path must belong to current user (prevents pointing at someone else's file)
+  if (!videoPath.startsWith(`${user.id}/`)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const { data: exercises } = await supabase
     .schema("physicalgo")
     .from("exercises")
@@ -41,7 +60,6 @@ export async function POST(request: Request) {
     .map((e) => `- ${e.name}（${e.name_ja}）`)
     .join("\n");
 
-  // Get previous feedbacks for context
   const { data: prevFeedbacks } = await supabase
     .schema("physicalgo")
     .from("form_feedbacks")
@@ -49,29 +67,6 @@ export async function POST(request: Request) {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(3);
-
-  const videoBuffer = Buffer.from(await videoFile.arrayBuffer());
-
-  // Upload video to Supabase Storage
-  const videoPath = `${user.id}/videos/${Date.now()}-${videoFile.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-  const { error: uploadError } = await supabase.storage
-    .from("physicalgo")
-    .upload(videoPath, videoBuffer, {
-      contentType: videoFile.type,
-      upsert: false,
-    });
-
-  if (uploadError) {
-    console.error("Upload error:", uploadError);
-    return NextResponse.json(
-      { error: `動画のアップロードに失敗しました: ${uploadError.message}` },
-      { status: 500 },
-    );
-  }
-
-  const {
-    data: { publicUrl: videoUrl },
-  } = supabase.storage.from("physicalgo").getPublicUrl(videoPath);
 
   const prevContext = prevFeedbacks?.length
     ? prevFeedbacks
@@ -94,7 +89,7 @@ ${exerciseList}
 【過去のフィードバック（改善点）】
 ${prevContext}
 
-動画ファイル: ${videoFile.name}（${Math.round(videoBuffer.length / 1024)}KB）
+動画ファイル: ${fileName}（${Math.round(fileSize / 1024)}KB）
 
 上記の種目のうちどれを行っているか判断し、フォームを分析してください。以下のJSON形式のみで返してください（コードブロックなし）：
 {
@@ -136,7 +131,6 @@ ${prevContext}
     };
   }
 
-  // Find exercise by AI's response
   const detectedExercise =
     exercises.find((e) => e.name === aiResponse.exercise_name) ?? exercises[0];
 

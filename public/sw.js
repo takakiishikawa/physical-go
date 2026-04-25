@@ -1,7 +1,6 @@
-const CACHE_NAME = "physicalgo-v2";
+const CACHE_NAME = "physicalgo-v3";
 const STATIC_ASSETS = [
   "/dashboard",
-  "/record",
   "/form",
   "/archive",
   "/body",
