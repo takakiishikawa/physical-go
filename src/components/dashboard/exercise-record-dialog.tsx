@@ -242,7 +242,7 @@ export function ExerciseRecordDialog({
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 履歴
               </h3>
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 最新{Math.min(records.length, HISTORY_LIMIT)} / {records.length}
                 件
               </span>
@@ -260,7 +260,7 @@ export function ExerciseRecordDialog({
                       <div className="py-3 space-y-2">
                         <div className="flex flex-wrap gap-2 items-end">
                           <div className="space-y-1">
-                            <Label className="text-[10px]">記録日</Label>
+                            <Label className="text-xs">記録日</Label>
                             <Input
                               type="date"
                               value={editDate}
@@ -270,7 +270,7 @@ export function ExerciseRecordDialog({
                             />
                           </div>
                           <div className="space-y-1">
-                            <Label className="text-[10px]">
+                            <Label className="text-xs">
                               {isPullUp ? "回数" : "重量(kg)"}
                             </Label>
                             <div className="flex items-center gap-1">

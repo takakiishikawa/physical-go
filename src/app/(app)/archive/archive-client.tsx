@@ -150,7 +150,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                 {count > 0 && (
                   <Badge
                     variant="secondary"
-                    className="text-[10px] px-1.5 py-0 h-4"
+                    className="text-xs px-1.5 py-0 h-4"
                   >
                     {count}
                   </Badge>
@@ -346,7 +346,7 @@ function SessionCard({
           </p>
         )}
         {feedback?.overall_comment && (
-          <p className="text-[11px] text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
             {feedback.overall_comment}
           </p>
         )}

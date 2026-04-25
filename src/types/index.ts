@@ -54,6 +54,16 @@ export interface FormSession {
   exercises?: Exercise;
 }
 
+export type ImprovementSeverity = "high" | "medium" | "low";
+
+export interface ImprovementItem {
+  title: string;
+  detail: string;
+  severity: ImprovementSeverity;
+}
+
+export type ImprovementInput = string | ImprovementItem;
+
 export interface FormFeedback {
   id: string;
   session_id: string;
@@ -61,7 +71,7 @@ export interface FormFeedback {
   exercise_id: string;
   overall_comment: string | null;
   checkpoints: Record<string, { result: string; comment: string }> | null;
-  improvements: string[] | null;
+  improvements: ImprovementInput[] | null;
   strengths: string[] | null;
   diagram_url: string | null;
   previous_comparison: string | null;
@@ -73,8 +83,7 @@ export interface FormFeedback {
 export interface AIFeedback {
   overall_comment: string;
   strengths: string[];
-  improvements: string[];
+  improvements: ImprovementInput[];
   checkpoints: Record<string, { result: string; comment: string }>;
   previous_comparison: string;
-  diagram_instruction: string;
 }

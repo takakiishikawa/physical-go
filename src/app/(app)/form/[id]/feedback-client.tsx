@@ -151,7 +151,7 @@ function ScoreRing({ score }: { score: number }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-2xl font-semibold leading-none">{score}</span>
-        <span className="text-[10px] text-muted-foreground mt-0.5">/ 100</span>
+        <span className="text-xs text-muted-foreground mt-0.5">/ 100</span>
       </div>
     </div>
   );
@@ -274,7 +274,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
                           </div>
                         )}
                       </div>
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         {format(new Date(ps.recorded_at), "M/d", {
                           locale: ja,
                         })}

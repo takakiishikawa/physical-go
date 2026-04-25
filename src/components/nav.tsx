@@ -100,7 +100,7 @@ function AppSwitcher() {
       {open && (
         <div className="absolute bottom-full left-0 right-0 mb-1 bg-card border border-border rounded-lg border border-border overflow-hidden z-50">
           <div className="px-3 py-2 border-b border-border">
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               アプリ切り替え
             </p>
           </div>
@@ -119,7 +119,7 @@ function AppSwitcher() {
                   <span className="text-sm font-medium text-foreground">
                     {app.name}
                   </span>
-                  <span className="ml-auto text-[10px] font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">
+                  <span className="ml-auto text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">
                     現在
                   </span>
                 </div>
@@ -219,12 +219,12 @@ export function BottomNav() {
               key={href}
               href={href}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-[48px]",
+                "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg transition-colors min-w-12",
                 isActive ? "text-primary" : "text-muted-foreground",
               )}
             >
               <Icon className="w-5 h-5" />
-              <span className="text-[9px] font-medium">{label}</span>
+              <span className="text-xs font-medium">{label}</span>
             </Link>
           );
         })}

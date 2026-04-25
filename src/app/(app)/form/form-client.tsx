@@ -367,7 +367,7 @@ export function FormClient({ sessions, feedbacks }: Props) {
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {session.exercises?.name_ja && (
                             <span
-                              className="text-[10px] font-medium px-1.5 py-0.5 rounded-full border"
+                              className="text-xs font-medium px-1.5 py-0.5 rounded-full border"
                               style={
                                 meta
                                   ? {
@@ -380,14 +380,14 @@ export function FormClient({ sessions, feedbacks }: Props) {
                               {session.exercises.name_ja}
                             </span>
                           )}
-                          <span className="text-[10px] text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             {format(new Date(session.recorded_at), "M月d日", {
                               locale: ja,
                             })}
                           </span>
                         </div>
                         {fb?.overall_comment && (
-                          <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                             {fb.overall_comment}
                           </p>
                         )}
