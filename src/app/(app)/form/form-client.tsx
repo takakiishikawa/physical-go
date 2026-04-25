@@ -203,12 +203,12 @@ export function FormClient({ sessions, feedbacks }: Props) {
       />
 
       {/* Hero upload card */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/5 via-background to-background">
+      <div className="relative overflow-hidden rounded-lg border border-border bg-gradient-to-br from-primary/5 via-background to-background">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--color-primary)_0%,transparent_50%)] opacity-[0.07] pointer-events-none" />
         <div className="relative p-5 md:p-8">
           {videoPreview ? (
             <div className="grid md:grid-cols-2 gap-6 items-start">
-              <div className="relative rounded-xl overflow-hidden bg-black aspect-video shadow-lg">
+              <div className="relative rounded-lg overflow-hidden bg-black aspect-video shadow-lg">
                 <video
                   src={videoPreview}
                   className="w-full h-full object-contain"
@@ -272,7 +272,7 @@ export function FormClient({ sessions, feedbacks }: Props) {
           ) : (
             <div className="space-y-5">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                   <Activity className="w-5 h-5" />
                 </div>
                 <div>
@@ -290,7 +290,7 @@ export function FormClient({ sessions, feedbacks }: Props) {
                       fileRef.current.click();
                     }
                   }}
-                  className="group flex flex-col items-center gap-2.5 p-5 rounded-xl border border-dashed border-border bg-card hover:border-primary hover:bg-primary/5 transition-all"
+                  className="group flex flex-col items-center gap-2.5 p-5 rounded-lg border border-dashed border-border bg-card hover:border-primary hover:bg-primary/5 transition-all"
                 >
                   <div className="w-10 h-10 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
                     <Camera className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -304,7 +304,7 @@ export function FormClient({ sessions, feedbacks }: Props) {
                       fileRef.current.click();
                     }
                   }}
-                  className="group flex flex-col items-center gap-2.5 p-5 rounded-xl border border-dashed border-border bg-card hover:border-primary hover:bg-primary/5 transition-all"
+                  className="group flex flex-col items-center gap-2.5 p-5 rounded-lg border border-dashed border-border bg-card hover:border-primary hover:bg-primary/5 transition-all"
                 >
                   <div className="w-10 h-10 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
                     <Upload className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -348,7 +348,7 @@ export function FormClient({ sessions, feedbacks }: Props) {
               return (
                 <div key={session.id} className="group relative">
                   <Link href={`/form/${session.id}`}>
-                    <div className="rounded-xl overflow-hidden border border-border hover:border-primary/40 transition-all bg-card">
+                    <div className="rounded-lg overflow-hidden border border-border hover:border-primary/40 transition-all bg-card">
                       <div className="aspect-video bg-muted overflow-hidden">
                         {session.video_url ? (
                           <video

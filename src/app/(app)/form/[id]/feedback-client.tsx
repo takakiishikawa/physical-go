@@ -233,7 +233,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
         {/* Left: Video + past sessions (sticky on desktop) */}
         <div className="space-y-4 lg:sticky lg:top-6 lg:self-start">
           {session.video_url ? (
-            <div className="rounded-2xl overflow-hidden bg-black aspect-video border border-border shadow-sm">
+            <div className="rounded-lg overflow-hidden bg-black aspect-video border border-border shadow-sm">
               <video
                 src={session.video_url}
                 className="w-full h-full object-contain"
@@ -243,7 +243,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
               />
             </div>
           ) : (
-            <div className="rounded-2xl bg-muted aspect-video flex items-center justify-center">
+            <div className="rounded-lg bg-muted aspect-video flex items-center justify-center">
               <Video className="w-12 h-12 text-muted-foreground/30" />
             </div>
           )}
@@ -296,7 +296,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
           ) : (
             <>
               {/* Hero summary card */}
-              <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/[0.04] via-card to-card p-5">
+              <div className="relative overflow-hidden rounded-lg border border-border bg-gradient-to-br from-primary/[0.04] via-card to-card p-5">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
                 <div className="relative flex items-start gap-4">
                   {checkpointEntries.length > 0 && <ScoreRing score={score} />}
@@ -330,7 +330,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
 
               {/* Previous comparison */}
               {feedback.previous_comparison && (
-                <div className="flex items-start gap-3 p-4 rounded-xl border border-primary/20 bg-primary/[0.04]">
+                <div className="flex items-start gap-3 p-4 rounded-lg border border-primary/20 bg-primary/[0.04]">
                   <TrendingUp className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-primary mb-1">
@@ -379,7 +379,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
                       return (
                         <div
                           key={i}
-                          className={`relative overflow-hidden rounded-xl border ${cfg.border} ${cfg.bg} pl-4 pr-3 py-3`}
+                          className={`relative overflow-hidden rounded-lg border ${cfg.border} ${cfg.bg} pl-4 pr-3 py-3`}
                         >
                           <div
                             className={`absolute top-0 left-0 bottom-0 w-1 ${cfg.accent}`}
