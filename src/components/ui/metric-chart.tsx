@@ -11,13 +11,7 @@ import {
   type ChartConfig,
 } from "@takaki/go-design-system";
 import { useId } from "react";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 interface MetricChartProps {
   title: string;
@@ -48,7 +42,10 @@ export function MetricChart({
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <ChartContainer config={config} className="aspect-auto h-[250px] w-full">
+        <ChartContainer
+          config={config}
+          className="aspect-auto h-[250px] w-full"
+        >
           <AreaChart
             data={data}
             margin={{ top: 8, right: 12, left: 4, bottom: 0 }}

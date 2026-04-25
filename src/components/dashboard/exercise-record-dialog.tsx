@@ -16,15 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Plus,
-  Star,
-  Pencil,
-  Trash2,
-  Check,
-  X,
-  Trophy,
-} from "lucide-react";
+import { Plus, Star, Pencil, Trash2, Check, X, Trophy } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { todayStr, toLocalIso } from "@/lib/date-utils";
 import { useDeleteConfirm } from "@/hooks/use-delete-confirm";

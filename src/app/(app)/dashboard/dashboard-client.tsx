@@ -43,8 +43,7 @@ export function DashboardClient({ exercises, personalRecords }: Props) {
 
       const sorted = [...exerciseRecords].sort(
         (a, b) =>
-          new Date(a.recorded_at).getTime() -
-          new Date(b.recorded_at).getTime(),
+          new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime(),
       );
 
       const chartData = sorted
