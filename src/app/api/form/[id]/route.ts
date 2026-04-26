@@ -30,7 +30,9 @@ export async function DELETE(
   const objectKeys = [session.video_url, session.frame_url]
     .filter((u): u is string => typeof u === "string" && u.length > 0)
     .map((url) => extractObjectKey(url, "physicalgo"))
-    .filter((key): key is string => key !== null && key.startsWith(`${user.id}/`));
+    .filter(
+      (key): key is string => key !== null && key.startsWith(`${user.id}/`),
+    );
 
   if (objectKeys.length > 0) {
     await supabase.storage.from("physicalgo").remove(objectKeys);

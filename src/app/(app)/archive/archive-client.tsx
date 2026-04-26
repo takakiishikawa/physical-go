@@ -282,7 +282,9 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>このフォームチェックを削除しますか？</AlertDialogTitle>
+            <AlertDialogTitle>
+              このフォームチェックを削除しますか？
+            </AlertDialogTitle>
             <AlertDialogDescription>
               動画とフィードバックがすべて削除されます。この操作は取り消せません。
             </AlertDialogDescription>

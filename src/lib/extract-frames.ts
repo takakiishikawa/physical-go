@@ -59,7 +59,10 @@ export async function extractFramesFromVideo(
     const start = duration * 0.05;
     const end = duration * 0.95;
     const step = (end - start) / Math.max(1, count - 1);
-    const timestamps = Array.from({ length: count }, (_, i) => start + step * i);
+    const timestamps = Array.from(
+      { length: count },
+      (_, i) => start + step * i,
+    );
 
     const frames: string[] = [];
     for (const t of timestamps) {
