@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/client";
 import { Scale, Plus } from "lucide-react";
 import {
@@ -20,11 +21,15 @@ import {
   type KpiCard,
 } from "@takaki/go-design-system";
 import { PageShell } from "@/components/layout/page-shell";
-import { MetricChart } from "@/components/ui/metric-chart";
 import { todayStr, toLocalIso } from "@/lib/date-utils";
 import { subDays, format } from "date-fns";
 import { ja } from "date-fns/locale";
 import type { BodyRecord } from "@/types";
+
+const MetricChart = dynamic(
+  () => import("@/components/ui/metric-chart").then((m) => ({ default: m.MetricChart })),
+  { ssr: false },
+);
 
 interface Props {
   bodyRecords: BodyRecord[];

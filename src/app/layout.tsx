@@ -1,9 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_JP } from "next/font/google";
+import dynamic from "next/dynamic";
 import { DesignTokens, Toaster } from "@takaki/go-design-system";
-import { Analytics } from "@vercel/analytics/react";
 import { PWARegister } from "@/components/pwa-register";
 import "./globals.css";
+
+const Analytics = dynamic(
+  () => import("@vercel/analytics/react").then((m) => ({ default: m.Analytics })),
+  { ssr: false },
+);
 
 const inter = Inter({
   variable: "--font-inter",
