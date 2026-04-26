@@ -2,10 +2,10 @@
 
 import { Activity } from "lucide-react";
 import { LoginPage } from "@takaki/go-design-system";
-import { createClient } from "@/lib/supabase/client";
 
 export default function Page() {
   const handleGoogleLogin = async () => {
+    const { createClient } = await import("@/lib/supabase/client");
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider: "google",

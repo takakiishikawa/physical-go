@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard,
   Dumbbell,
@@ -98,7 +97,7 @@ function AppSwitcher() {
       </Button>
 
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 bg-card border border-border rounded-lg border border-border overflow-hidden z-50">
+        <div className="absolute bottom-full left-0 right-0 mb-1 bg-card border border-border rounded-lg overflow-hidden z-50">
           <div className="px-3 py-2 border-b border-border">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               アプリ切り替え
@@ -190,6 +189,7 @@ export function Sidebar() {
 function SidebarLogout() {
   const router = useRouter();
   const handleSignOut = async () => {
+    const { createClient } = await import("@/lib/supabase/client");
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/");

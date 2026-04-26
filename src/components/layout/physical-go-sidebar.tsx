@@ -25,7 +25,6 @@ import {
   Settings,
   Video,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 const MAIN_NAV = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ダッシュボード" },
@@ -79,18 +78,20 @@ export function PhysicalGoSidebar() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUserProfile({
-          name:
-            user.user_metadata?.full_name ??
-            user.email?.split("@")[0] ??
-            "User",
-          email: user.email ?? "",
-          avatar: user.user_metadata?.avatar_url,
-        });
-      }
+    import("@/lib/supabase/client").then(({ createClient }) => {
+      const supabase = createClient();
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) {
+          setUserProfile({
+            name:
+              user.user_metadata?.full_name ??
+              user.email?.split("@")[0] ??
+              "User",
+            email: user.email ?? "",
+            avatar: user.user_metadata?.avatar_url,
+          });
+        }
+      });
     });
   }, []);
 
@@ -99,6 +100,7 @@ export function PhysicalGoSidebar() {
   }
 
   async function handleSignOut() {
+    const { createClient } = await import("@/lib/supabase/client");
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push("/");

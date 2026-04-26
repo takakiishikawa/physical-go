@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_JP } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
+import dynamic from "next/dynamic";
 import { DesignTokens, Toaster } from "@takaki/go-design-system";
-import { PWARegister } from "@/components/pwa-register";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,6 +33,16 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
 };
+
+const PWARegister = dynamic(() => import("@/components/pwa-register"), {
+  ssr: false,
+});
+
+const Analytics = dynamic(
+  () =>
+    import("@vercel/analytics/react").then((m) => ({ default: m.Analytics })),
+  { ssr: false },
+);
 
 export default function RootLayout({
   children,
