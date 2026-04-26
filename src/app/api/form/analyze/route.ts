@@ -42,15 +42,12 @@ const FEEDBACK_SCHEMA = {
     strengths: {
       type: "array",
       items: { type: "string" },
-      minItems: 2,
-      maxItems: 4,
       description:
-        "できていることを身体部位や局面とセットで具体的に（各40〜70字）",
+        "できていることを身体部位や局面とセットで具体的に（各40〜70字）。必ず2〜4個の要素を返す。",
     },
     improvements: {
       type: "array",
-      minItems: 2,
-      maxItems: 5,
+      description: "改善ポイント。必ず2〜5個の要素を返す。",
       items: {
         type: "object",
         additionalProperties: false,
@@ -74,8 +71,8 @@ const FEEDBACK_SCHEMA = {
     },
     checkpoints: {
       type: "array",
-      minItems: 4,
-      maxItems: 7,
+      description:
+        "種目ごとに重要なチェック項目。必ず4〜7個の要素を返す。確認できない項目は result を確認不可に。",
       items: {
         type: "object",
         additionalProperties: false,
