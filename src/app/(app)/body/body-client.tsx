@@ -27,7 +27,10 @@ import { ja } from "date-fns/locale";
 import type { BodyRecord } from "@/types";
 
 const MetricChart = dynamic(
-  () => import("@/components/ui/metric-chart").then((m) => ({ default: m.MetricChart })),
+  () =>
+    import("@/components/ui/metric-chart").then((m) => ({
+      default: m.MetricChart,
+    })),
   { ssr: false },
 );
 
