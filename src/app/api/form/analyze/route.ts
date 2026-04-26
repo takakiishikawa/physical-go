@@ -37,9 +37,7 @@ const FEEDBACK_SCHEMA = {
     },
     score: {
       type: "integer",
-      minimum: 0,
-      maximum: 100,
-      description: "総合スコア 0–100",
+      description: "総合スコア 0–100の整数（0=最低、100=完璧）",
     },
     strengths: {
       type: "array",
@@ -276,24 +274,33 @@ ${prevContext}`;
 
   try {
     const message = await anthropic.messages.create({
-      model: "claude-opus-4-7",
-      max_tokens: 4096,
+      model: "claude-sonnet-4-6",
+      max_tokens: 8000,
       thinking: { type: "adaptive" },
       output_config: {
-        effort: "high",
+        effort: "medium",
         format: { type: "json_schema", schema: FEEDBACK_SCHEMA },
       },
       system: systemPrompt,
       messages: [{ role: "user", content: userContent }],
     });
 
+    console.log("[form/analyze] usage", {
+      input_tokens: message.usage.input_tokens,
+      output_tokens: message.usage.output_tokens,
+      stop_reason: message.stop_reason,
+    });
+
     const textBlock = message.content.find((b) => b.type === "text");
     if (!textBlock || textBlock.type !== "text") {
-      throw new Error("AI response missing text block");
+      throw new Error(
+        `AI response missing text block (stop_reason=${message.stop_reason})`,
+      );
     }
     aiResponse = JSON.parse(textBlock.text) as AIResponse;
   } catch (e) {
-    console.error("AI analysis error:", e);
+    const detail = e instanceof Error ? e.message : String(e);
+    console.error("[form/analyze] AI analysis error:", detail, e);
     return NextResponse.json(
       {
         error:

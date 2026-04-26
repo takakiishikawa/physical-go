@@ -306,7 +306,7 @@ export function FeedbackClient({ session, feedback, pastSessions }: Props) {
                   <div className="flex-1 min-w-0 space-y-2">
                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                       <Sparkles className="w-3.5 h-3.5 text-primary" />
-                      <span>Claude Opus 4.7 の総合分析</span>
+                      <span>Claude Sonnet 4.6 の総合分析</span>
                     </div>
                     {feedback.overall_comment && (
                       <p className="text-sm leading-relaxed text-foreground">
