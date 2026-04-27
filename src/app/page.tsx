@@ -4,8 +4,9 @@ import dynamic from "next/dynamic";
 import { Activity } from "lucide-react";
 
 const LoginPage = dynamic(
-  () => import("@takaki/go-design-system").then((m) => ({ default: m.LoginPage })),
-  { ssr: false, loading: () => <div className="min-h-screen" /> }
+  () =>
+    import("@takaki/go-design-system").then((m) => ({ default: m.LoginPage })),
+  { ssr: false, loading: () => <div className="min-h-screen" /> },
 );
 
 export default function Page() {
