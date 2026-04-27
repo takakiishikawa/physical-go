@@ -6,13 +6,15 @@ import { PWARegister } from "@/components/pwa-register";
 import "./globals.css";
 
 const Toaster = dynamic(
-  () => import("@takaki/go-design-system").then((m) => ({ default: m.Toaster })),
-  { ssr: false }
+  () =>
+    import("@takaki/go-design-system").then((m) => ({ default: m.Toaster })),
+  { ssr: false },
 );
 
 const Analytics = dynamic(
-  () => import("@vercel/analytics/react").then((m) => ({ default: m.Analytics })),
-  { ssr: false }
+  () =>
+    import("@vercel/analytics/react").then((m) => ({ default: m.Analytics })),
+  { ssr: false },
 );
 
 const inter = Inter({
