@@ -10,15 +10,29 @@ import {
 } from "@takaki/go-design-system";
 import { Plus } from "lucide-react";
 import { PageShell } from "@/components/layout/page-shell";
-import { MetricChart } from "@/components/ui/metric-chart";
-import { ExerciseRecordDialog } from "@/components/dashboard/exercise-record-dialog";
 import type { Exercise, PersonalRecord } from "@/types";
 import { EXERCISE_META, EXERCISE_NAMES } from "@/lib/exercise-meta";
 import { format, subDays } from "date-fns";
 import { ja } from "date-fns/locale";
 
+const MetricChart = dynamic(
+  () =>
+    import("@/components/ui/metric-chart").then((m) => ({
+      default: m.MetricChart,
+    })),
+  { ssr: false },
+);
+
 const ConfettiComponent = dynamic(
   () => import("@/components/dashboard/confetti"),
+  { ssr: false },
+);
+
+const ExerciseRecordDialog = dynamic(
+  () =>
+    import("@/components/dashboard/exercise-record-dialog").then((m) => ({
+      default: m.ExerciseRecordDialog,
+    })),
   { ssr: false },
 );
 
