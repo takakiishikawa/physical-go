@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import {
   Sidebar,
   SidebarContent,
@@ -15,7 +16,6 @@ import {
   SidebarMenuItem,
   SidebarRail,
   AppSwitcher,
-  UserMenu,
   type AppInfo,
 } from "@takaki/go-design-system";
 import {
@@ -25,6 +25,10 @@ import {
   Settings,
   Video,
 } from "lucide-react";
+
+const UserMenu = dynamic(() =>
+  import("@takaki/go-design-system").then((m) => ({ default: m.UserMenu }))
+);
 
 const MAIN_NAV = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ダッシュボード" },

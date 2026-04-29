@@ -176,6 +176,7 @@ export function ArchiveClient({ exercises, sessions, feedbacks }: Props) {
                               controls
                               muted
                               playsInline
+                              preload="none"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
@@ -325,6 +326,7 @@ function SessionCard({
             className="w-full h-full object-cover pointer-events-none"
             muted
             playsInline
+            preload="none"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
