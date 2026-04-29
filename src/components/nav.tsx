@@ -15,12 +15,18 @@ import {
 import { cn } from "@/lib/utils";
 
 const NavAppSwitcher = dynamic(
-  () => import("@/components/nav-switcher").then((m) => ({ default: m.NavAppSwitcher })),
+  () =>
+    import("@/components/nav-switcher").then((m) => ({
+      default: m.NavAppSwitcher,
+    })),
   { ssr: false },
 );
 
 const NavSidebarLogout = dynamic(
-  () => import("@/components/nav-switcher").then((m) => ({ default: m.NavSidebarLogout })),
+  () =>
+    import("@/components/nav-switcher").then((m) => ({
+      default: m.NavSidebarLogout,
+    })),
   { ssr: false },
 );
 
