@@ -28,7 +28,7 @@ import type { BodyRecord } from "@/types";
 
 const MetricChart = dynamic(
   () =>
-    import("@/components/ui/metric-chart").then((m) => ({
+    import("@/components/charts/metric-chart").then((m) => ({
       default: m.MetricChart,
     })),
   { ssr: false },
