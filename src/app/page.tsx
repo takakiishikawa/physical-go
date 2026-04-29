@@ -1,13 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { Activity } from "lucide-react";
-
-const LoginPage = dynamic(
-  () =>
-    import("@takaki/go-design-system").then((m) => ({ default: m.LoginPage })),
-  { loading: () => <div className="min-h-screen" /> },
-);
+import { LoginPage } from "@takaki/go-design-system";
 
 export default function Page() {
   const handleGoogleLogin = async () => {
