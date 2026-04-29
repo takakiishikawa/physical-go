@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Noto_Sans_JP } from "next/font/google";
 import dynamic from "next/dynamic";
 import { DesignTokens } from "@takaki/go-design-system";
-import { PWARegister } from "@/components/pwa-register";
 import "./globals.css";
 
 const Toaster = dynamic(
@@ -14,6 +13,14 @@ const Toaster = dynamic(
 const Analytics = dynamic(
   () =>
     import("@vercel/analytics/react").then((m) => ({ default: m.Analytics })),
+  { ssr: false },
+);
+
+const PWARegister = dynamic(
+  () =>
+    import("@/components/pwa-register").then((m) => ({
+      default: m.PWARegister,
+    })),
   { ssr: false },
 );
 
