@@ -26,8 +26,10 @@ import {
   Video,
 } from "lucide-react";
 
-const UserMenu = dynamic(() =>
-  import("@takaki/go-design-system").then((m) => ({ default: m.UserMenu })),
+const UserMenu = dynamic(
+  () =>
+    import("@takaki/go-design-system").then((m) => ({ default: m.UserMenu })),
+  { ssr: false },
 );
 
 const MAIN_NAV = [
