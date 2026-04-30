@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 const UserMenu = dynamic(() =>
-  import("@takaki/go-design-system").then((m) => ({ default: m.UserMenu }))
+  import("@takaki/go-design-system").then((m) => ({ default: m.UserMenu })),
 );
 
 const MAIN_NAV = [
