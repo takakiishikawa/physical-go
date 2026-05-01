@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import dynamic from "next/dynamic";
 import {
   LayoutDashboard,
   Dumbbell,
@@ -11,24 +10,59 @@ import {
   Scale,
   Settings,
   Activity,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const NavAppSwitcher = dynamic(
-  () =>
-    import("@/components/nav-switcher").then((m) => ({
-      default: m.NavAppSwitcher,
-    })),
-  { ssr: false },
-);
+const GO_APPS = [
+  { name: "MetaGo", url: "https://metago.vercel.app/" },
+  { name: "NativeGo", url: "https://english-learning-app-black.vercel.app/" },
+  { name: "CareGo", url: "https://care-go-mu.vercel.app/dashboard" },
+  { name: "KenyakuGo", url: "https://kenyaku-go.vercel.app/" },
+  { name: "CookGo", url: "https://cook-go-lovat.vercel.app/dashboard" },
+  { name: "PhysicalGo", url: "https://physical-go.vercel.app/dashboard" },
+  { name: "TaskGo", url: "https://taskgo-dun.vercel.app/" },
+];
 
-const NavSidebarLogout = dynamic(
-  () =>
-    import("@/components/nav-switcher").then((m) => ({
-      default: m.NavSidebarLogout,
-    })),
-  { ssr: false },
-);
+function NavAppSwitcher() {
+  return (
+    <div className="px-3 py-1.5">
+      <p className="text-xs font-medium text-muted-foreground mb-1">Apps</p>
+      <div className="flex flex-wrap gap-1">
+        {GO_APPS.map((app) => (
+          <a
+            key={app.name}
+            href={app.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {app.name}
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function NavSidebarLogout() {
+  async function handleSignOut() {
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  }
+
+  return (
+    <button
+      onClick={handleSignOut}
+      className="flex w-full items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+    >
+      <LogOut className="w-4 h-4 shrink-0" />
+      ログアウト
+    </button>
+  );
+}
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "ホーム" },
